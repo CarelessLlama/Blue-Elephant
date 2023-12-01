@@ -2,6 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import createDebug from 'debug';
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
+require('dotenv').config();
 
 const debug = createDebug('bot:dev');
 

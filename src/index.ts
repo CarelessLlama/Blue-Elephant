@@ -4,6 +4,7 @@ import { about } from './commands';
 import { greeting } from './text';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
+require('dotenv').config();
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';
@@ -19,3 +20,5 @@ export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
 };
 //dev mode
 ENVIRONMENT !== 'production' && development(bot);
+
+console.log(BOT_TOKEN);
