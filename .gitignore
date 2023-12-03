@@ -12,6 +12,7 @@
 # misc
 .DS_Store
 .env*
+DUMMY.md
 !.env-sample
 
 npm-debug.log*
