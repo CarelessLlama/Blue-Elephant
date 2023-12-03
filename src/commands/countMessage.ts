@@ -4,7 +4,7 @@ import { author, name, version } from '../../package.json';
 import { Context, session } from 'telegraf';
 
 
-const debug = createDebug('bot:about_command');
+const debug = createDebug('bot:count_command');
 
 const countMessage = () => async (ctx: Context) => {
     const userSession = (ctx as any).session; // Cast ctx to 'any' type to access 'session' property

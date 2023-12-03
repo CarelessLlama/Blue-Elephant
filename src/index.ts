@@ -1,4 +1,4 @@
-import { Telegraf } from 'telegraf';
+import { session, Telegraf } from 'telegraf';
 
 import { about, countMessage } from './commands';
 import { greeting } from './text';
@@ -10,6 +10,8 @@ const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';
 
 const bot = new Telegraf(BOT_TOKEN);
+
+bot.use(session());
 
 bot.command('count', countMessage());
 bot.command('about', about());
