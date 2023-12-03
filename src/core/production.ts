@@ -30,7 +30,7 @@ const production = async (
   }
 
   if (req.method === 'POST') {
-    return await bot.handleUpdate(req.body as unknown as Update, res);
+    await bot.handleUpdate(req.body as unknown as Update, res);
   } else {
     res.status(200).json('Listening to bot events...');
   }
