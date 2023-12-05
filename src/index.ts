@@ -20,6 +20,17 @@ interface BotContext extends Context {
 
 const bot = new Telegraf<BotContext>(BOT_TOKEN);
 
+bot.telegram.setMyCommands([
+  {
+    command: 'about',
+    description: 'About command',
+  },
+  {
+    command: 'count',
+    description: 'Count command',
+  }
+]);
+
 bot.use(session());
 
 bot.command('count', countMessage());
