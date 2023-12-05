@@ -10,7 +10,7 @@ const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';
 
 interface SessionData {
-  heyCounter: number
+  counter: number
 }
 
 interface BotContext extends Context {
