@@ -13,7 +13,7 @@ const bot = new Telegraf(BOT_TOKEN);
 
 bot.use(session());
 
-// bot.command('count', countMessage());
+bot.command('count', countMessage());
 bot.command('about', about());
 bot.on('message', greeting());
 
