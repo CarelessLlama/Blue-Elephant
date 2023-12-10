@@ -45,4 +45,4 @@ export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
 //dev mode
 ENVIRONMENT !== 'production' && development(bot);
 
-console.log(BOT_TOKEN);
+// console.log(BOT_TOKEN);
