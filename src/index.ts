@@ -20,6 +20,7 @@ interface BotContext extends Context {
 
 const bot = new Telegraf<BotContext>(BOT_TOKEN);
 
+// Set command suggestions
 bot.telegram.setMyCommands([
   {
     command: 'about',

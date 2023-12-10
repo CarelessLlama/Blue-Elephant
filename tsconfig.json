@@ -8,7 +8,9 @@
     "sourceMap": true,
     "outDir": "public",
     "lib": ["esnext", "dom"],
+    "types": ["jest"],
     "resolveJsonModule": true
   },
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

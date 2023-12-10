@@ -1,7 +1,6 @@
 import createDebug from 'debug';
 
 import { author, name, version } from '../../package.json';
-import { Context, session } from 'telegraf';
 
 
 const debug = createDebug('bot:count_command');
