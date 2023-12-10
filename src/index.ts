@@ -1,4 +1,5 @@
-import { session, Telegraf, Context } from 'telegraf';
+import { session, Scenes, Telegraf, Context } from 'telegraf';
+import { BotContext } from './BotContext';
 
 import { about, countMessage } from './commands';
 import { greeting } from './text';
@@ -8,14 +9,6 @@ require('dotenv').config();
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';
-
-interface SessionData {
-  counter: number
-}
-
-interface BotContext extends Context {
-  session?: SessionData
-}
 
 
 const bot = new Telegraf<BotContext>(BOT_TOKEN);
