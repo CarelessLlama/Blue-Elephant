@@ -4,6 +4,8 @@ import { Project } from '../models/Project';
 
 import { Scenes } from 'telegraf';
 
+import { createProject } from './../../db/functions';
+
 import {
     UnknownError,
     InvalidTextError,
@@ -122,6 +124,13 @@ const askForProjectMembers = async (ctx: BotContext) => {
         debug(`Valid project members' inputs: ${text}`);
         const project = ctx.scene.session.project;
         project.setPersons(text);
+        createProject(
+            project.getUserid(),
+            project.getName(),
+            project.getDescription(),
+            project.getPersons(),
+            project.getAdjMatrix(),
+        );
         await ctx.reply(`Project members saved. Exiting scene now.`);
         console.log(project);
         return ctx.scene.leave();

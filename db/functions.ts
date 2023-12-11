@@ -66,8 +66,8 @@ export async function createProject(
     userId: number,
     name: string,
     description: string,
-    members: [string],
-    relationGraph: [[number]],
+    members: string[],
+    relationGraph: number[][],
 ): Promise<String> {
     const project = await DbProject.create({
         userId: userId,
