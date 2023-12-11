@@ -33,6 +33,9 @@ export class Project {
 
     public removePerson(person: Person): void {
         const personIndex = this.personArr.indexOf(person.toString());
+        this.personArr.splice(personIndex, 1);
+        this.adjMatrix.splice(personIndex, 1);
+        this.adjMatrix.forEach((row) => row.splice(personIndex, 1));
     }
 
     public getGroupings(numGroups: number): void {}
