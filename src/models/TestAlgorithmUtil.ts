@@ -32,7 +32,7 @@ class AlgorithmTester {
      */
     public static generateProject(n: number): Project {
         return new Project(
-            1,
+            '1',
             1,
             'test',
             'test',
