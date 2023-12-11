@@ -5,9 +5,14 @@ import { author, name, version } from '../../package.json';
 
 const debug = createDebug('bot:count_command');
 
+/**
+ * Counts the number of messages sent to the bot.
+ * @returns A middleware function that handles the counting of messages.
+ * This function serves the purpose of testing how the Telegraf Session object is being used.
+ */
 const countMessage = () => async (ctx: any) => {
     try {
-        ctx.session ??= { counter: 0 };
+        ctx.session ??= { counter: 1 };
         const userSession = ctx.session; // Cast ctx to 'any' type to access 'session' property
         const message = `Hello ${ctx.from.first_name}! You have sent ${userSession.counter} messages to me.`;
         debug(`${name} has sent ${userSession.counter} messages.`);
