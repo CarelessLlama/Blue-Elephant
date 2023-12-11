@@ -92,3 +92,12 @@ export async function getProjects(
     }
     return map;
 }
+
+/**
+ * Deletes a project from the database by its id.
+ *
+ * @param projectId id of the project to be deleted
+ */
+export async function deleteProject(projectId: string) {
+    await DbProject.deleteOne({ _id: new ObjectId(projectId) });
+}
