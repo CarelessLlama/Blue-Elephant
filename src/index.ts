@@ -9,6 +9,7 @@ import {
     deleteProject,
     addProjectScene,
     viewMainMenuScene,
+    generateExistingProjectsScene,
 } from './commands';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
@@ -34,6 +35,7 @@ bot.telegram.setMyCommands([
 const stage = new Scenes.Stage<BotContext>([
     addProjectScene,
     viewMainMenuScene,
+    generateExistingProjectsScene,
 ]);
 
 bot.use(session());

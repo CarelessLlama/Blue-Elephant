@@ -42,11 +42,7 @@ const handleMainMenuOption = async (ctx: BotContext) => {
             debug('User selected "View Existing Project(s)"');
             // Handle 'View Existing Project(s)' option
             // ...
-            await ctx.reply(
-                `Viewing existing project. Leaving scene now.`,
-                Markup.removeKeyboard(),
-            );
-            return ctx.scene.leave();
+            return ctx.scene.enter('existingProjects', Markup.removeKeyboard());
         } else {
             await ctx.reply(
                 'Invalid option. Please select a valid option from the keyboard.',

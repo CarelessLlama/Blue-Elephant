@@ -5,3 +5,4 @@ export * from './editProjectScene';
 export * from './viewProjectScene';
 export * from './deleteProjectScene';
 export * from './viewMainMenuScene';
+export * from './generateExistingProjectsScene';
