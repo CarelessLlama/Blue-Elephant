@@ -23,7 +23,10 @@ export async function connectToDatabase() {
  */
 export async function saveProject(proj: Project) {
     const id = new ObjectId(proj.getId());
-    await DbProject.replaceOne(id, proj);
+    const result = await DbProject.replaceOne(id, proj).exec();
+    if (result.modifiedCount == 0) {
+        throw new Error('Failed to save. Project Id: ' + proj.getId());
+    }
 }
 
 /**
@@ -99,5 +102,5 @@ export async function getProjects(
  * @param projectId id of the project to be deleted
  */
 export async function deleteProject(projectId: string) {
-    await DbProject.deleteOne({ _id: new ObjectId(projectId) });
+    await DbProject.deleteOne({ _id: new ObjectId(projectId) }).exec();
 }
