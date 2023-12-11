@@ -1,5 +1,5 @@
 import mongoose, { Types } from 'mongoose';
-import { Project as DbProject } from '../db/schema/Project';
+import { Project as DbProject } from '../db/schema/project';
 import { Project } from '../src/models/Project';
 import { ObjectId } from 'mongodb';
 require('dotenv').config();
@@ -66,8 +66,8 @@ export async function createProject(
     userId: number,
     name: string,
     description: string,
-    members: [string],
-    relationGraph: [[number]],
+    members: string[],
+    relationGraph: number[][],
 ): Promise<String> {
     const project = await DbProject.create({
         userId: userId,
