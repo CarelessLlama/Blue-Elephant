@@ -1,10 +1,10 @@
 {
-  "name": "telegram-bot-vercel-boilerplate",
-  "version": "1.1.0",
-  "description": "Telegram Bot Vercel Boilerplate",
+  "name": "Blue-Elephant",
+  "version": "1.0",
+  "description": "Blue Elephant Grouping Bot",
   "main": "src/index.ts",
-  "author": "Mark Pavlov (https://github.com/sollidy)",
-  "homepage": "https://github.com/sollidy/telegram-bot-vercel-boilerplate",
+  "author": "Ryan Poon (https://github.com/sopa301)\nNicholas Chia (https://github.com/nikele2001)",
+  "homepage": "https://github.com/nikele2001/Blue-Elephant",
   "dependencies": {
     "@vercel/node": "^3.0.11",
     "dotenv-cli": "^7.3.0",
