@@ -51,9 +51,10 @@ const handleProjectName = async (ctx: BotContext) => {
         }
 
         // Save the project name and ask for the next piece of information
-        ctx.scene.session.project = new Project(0, 0, '', '', [[]], []);
-        ctx.scene.session.project.setName(text);
-        ctx.scene.session.project.setUserId(ctx.from.id);
+        ctx.scene.session.project = new Project('', 0, '', '', [[]], []);
+        const project = ctx.scene.session.project;
+        project.setName(text);
+        project.setUserId(ctx.from.id);
         await ctx.reply(
             `Project name saved. Please enter a short description for your project.`,
         );
@@ -86,7 +87,6 @@ const askForProjectDescription = async (ctx: BotContext) => {
         }
         // Save the project description and ask for the next piece of information
         debug(`Valid project description: ${text}`);
-        console.log(ctx.scene.session.project);
         ctx.scene.session.project.setDescription(text);
         await ctx.reply(
             `Project description saved. Please enter the project members' names, delimited by commas and no spaces.`,
@@ -120,9 +120,10 @@ const askForProjectMembers = async (ctx: BotContext) => {
         }
         // Save the project description and ask for the next piece of information
         debug(`Valid project members' inputs: ${text}`);
-        ctx.scene.session.project.setPersons(text);
+        const project = ctx.scene.session.project;
+        project.setPersons(text);
         await ctx.reply(`Project members saved. Exiting scene now.`);
-        console.log(ctx.scene.session.project);
+        console.log(project);
         return ctx.scene.leave();
     } catch (error) {
         const errorMessage = (error as Error).message;

@@ -1,7 +1,7 @@
 import { Person } from './Person';
 
 export class Project {
-    private id: number;
+    private id: string;
     private userid: number;
     private name: string;
     private description: string;
@@ -9,7 +9,7 @@ export class Project {
     private adjMatrix: number[][];
 
     constructor(
-        id: number,
+        id: string,
         userid: number,
         name: string,
         description: string,
@@ -40,7 +40,7 @@ export class Project {
 
     public getGroupings(numGroups: number): void {}
 
-    public getId(): number {
+    public getId(): string {
         return this.id;
     }
 
@@ -48,35 +48,45 @@ export class Project {
         return this.userid;
     }
 
-    public setUserId(userid: number): void {
-        this.userid = userid;
-    }
-
     public getName(): string {
         return this.name;
-    }
-
-    public setName(name: string): void {
-        this.name = name;
     }
 
     public getDescription(): string {
         return this.description;
     }
 
-    public setDescription(description: string): void {
-        this.description = description;
-    }
-
     public getPersons(): string[] {
         return this.personArr;
     }
 
-    public setPersons(personArrString: string): void {
-        this.personArr = personArrString.split(',');
-    }
-
     public getAdjMatrix(): number[][] {
         return this.adjMatrix;
+    }
+
+    public setUserId(userid: number): void {
+        this.userid = userid;
+    }
+
+    public setName(name: string): void {
+        this.name = name;
+    }
+
+    public setDescription(description: string): void {
+        this.description = description;
+    }
+
+    public setPersons(personArrString: string): void {
+        this.personArr = personArrString.split(',');
+        const n = this.personArr.length;
+        this.setAdjMatrix(
+            Array(n)
+                .fill(null)
+                .map(() => Array(n).fill(0)),
+        );
+    }
+
+    public setAdjMatrix(adjMatrix: number[][]): void {
+        this.adjMatrix = adjMatrix;
     }
 }
