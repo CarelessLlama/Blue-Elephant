@@ -13,7 +13,7 @@ import {
 } from './commands';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
-import { Project } from '../db/schema/project';
+import {connectToDatabase} from '../db/functions';
 require('dotenv').config();
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
@@ -47,14 +47,9 @@ bot.command('start', (ctx) => ctx.scene.enter('mainMenu'));
 
 //prod mode (Vercel)
 export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
-  // connect to MongoDB
-  const dbUri = process.env.MONGODB_URI;
-  if (!dbUri) {
-    throw new Error('Please define the MONGODB_URI environment variable');
-  }
-  await mongoose.connect(dbUri);
+  await connectToDatabase();
   await production(req, res, bot);
 };
 //dev mode
 ENVIRONMENT !== 'production' && development(bot);
-// console.log(BOT_TOKEN);
+connectToDatabase().catch(console.dir);

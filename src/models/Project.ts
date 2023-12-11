@@ -1,7 +1,7 @@
 import { Person } from './Person';
 
 export class Project {
-    private id: number;
+    private id: string;
     private userid: number;
     private name: string;
     private description: string;
@@ -9,7 +9,7 @@ export class Project {
     private adjMatrix: number[][];
 
     constructor(
-        id: number,
+        id: string,
         userid: number,
         name: string,
         description: string,
@@ -40,7 +40,7 @@ export class Project {
 
     public getGroupings(numGroups: number): void {}
 
-    public getId(): number {
+    public getId(): string {
         return this.id;
     }
 
