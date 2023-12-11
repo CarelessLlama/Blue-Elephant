@@ -1,62 +1,79 @@
-import { Person } from './person/Person';
-import { PersonManager } from './person/PersonManager';
-import { GroupManager } from './grouping/GroupManager';
-import { EdgeManager } from './edge/EdgeManager';
-import { Edge } from './edge/Edge';
+import { Person } from './Person';
 
 export class Project {
+    private id: number;
+    private userid: number;
     private name: string;
     private description: string;
-    private personManager: PersonManager = new PersonManager();
-    private GroupManager: GroupManager<Person> = new GroupManager<Person>();
-    private EdgeManager: EdgeManager<Person> = new EdgeManager<Person>();
+    private personArr: string[];
+    private adjMatrix: number[][];
 
-    constructor(name: string, description: string);
-    constructor(name: string, description: string, personManager?: PersonManager, edgeManager?: EdgeManager<Person>) {
+    constructor(
+        id: number,
+        userid: number,
+        name: string,
+        description: string,
+        adjMatrix: number[][],
+        stringPersonArr: string[],
+    ) {
+        this.id = id;
+        this.userid = userid;
         this.name = name;
         this.description = description;
-        if (personManager) {
-            this.personManager = personManager;
-        }
-        if (edgeManager) {
-            this.EdgeManager = edgeManager;
-        }
+        this.adjMatrix = adjMatrix;
+        this.personArr = stringPersonArr;
     }
 
-    public addPerson(person: Person): void {
-        this.personManager.getPersons().forEach((p) => {
-            this.EdgeManager.addEdge(new Edge<Person>(person, p, 0));
-            this.EdgeManager.addEdge(new Edge<Person>(p, person, 0));
-        });
-        this.personManager.addPerson(person);
-        
+    public addPerson(personName: string): void {
+        const num_members = this.personArr.length;
+        this.personArr.push(personName);
+        this.adjMatrix.forEach((row) => row.push(0));
+        this.adjMatrix.push(new Array(num_members + 1).fill(0));
     }
 
     public removePerson(person: Person): void {
-        this.personManager.removePerson(person);
-        this.EdgeManager.removeEdgesWith(person);
+        const personIndex = this.personArr.indexOf(person.toString());
     }
 
-    public getGroupings(numGroups: number): void {
-        this.GroupManager.setParent(this.personManager.getPersons());
-        this.EdgeManager.setExistingEdges(this.personManager.getPersons());
-        const groupSize = Math.round(this.personManager.getSize() / numGroups);
-        // CONTINUE HERE
-        // How to check if group has already reached group size limit?
-        // How to check if number of groups is already reached?
+    public getGroupings(numGroups: number): void {}
 
+    public getId(): number {
+        return this.id;
+    }
+
+    public getUserid(): number {
+        return this.userid;
+    }
+
+    public setUserId(userid: number): void {
+        this.userid = userid;
     }
 
     public getName(): string {
         return this.name;
     }
 
+    public setName(name: string): void {
+        this.name = name;
+    }
+
     public getDescription(): string {
         return this.description;
     }
 
-    public getPersons(): PersonManager {
-        return this.personManager;
+    public setDescription(description: string): void {
+        this.description = description;
     }
 
+    public getPersons(): string[] {
+        return this.personArr;
+    }
+
+    public setPersons(personArrString: string): void {
+        this.personArr = personArrString.split(',');
+    }
+
+    public getAdjMatrix(): number[][] {
+        return this.adjMatrix;
+    }
 }
