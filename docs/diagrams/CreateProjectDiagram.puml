@@ -1,0 +1,19 @@
+@startuml
+skin rose
+skinparam ActivityFontSize 15
+skinparam ArrowFontSize 12
+start
+:/start;
+
+:Main Menu;
+
+if (Create New Project) then (yes)
+  :Enter Name;
+  :Enter Description;
+  :Enter Project Members' Names;
+else (no)
+  :Exit;
+endif
+
+stop
+@enduml
