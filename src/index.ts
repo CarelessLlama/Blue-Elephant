@@ -1,4 +1,4 @@
-import { session, Scenes, Telegraf, Context } from 'telegraf';
+import { Scenes, session, Telegraf } from 'telegraf';
 import { BotContext } from './BotContext';
 
 import {
@@ -7,9 +7,9 @@ import {
     viewProject,
     editProject,
     deleteProject,
-    addProjectStage,
+    addProjectScene,
+    viewMainMenuScene,
 } from './commands';
-import { greeting } from './text';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 require('dotenv').config();
@@ -31,13 +31,17 @@ bot.telegram.setMyCommands([
     },
 ]);
 
-bot.use(session());
-bot.use(addProjectStage.middleware());
+const stage = new Scenes.Stage<BotContext>([
+    addProjectScene,
+    viewMainMenuScene,
+]);
 
-// bot.command('count', countMessage());
+bot.use(session());
+bot.use(stage.middleware());
+
 bot.command('about', about());
-// bot.on('message', greeting());
-bot.command('start', (ctx) => ctx.scene.enter('addProject'));
+
+bot.command('start', (ctx) => ctx.scene.enter('mainMenu'));
 
 //prod mode (Vercel)
 export const startVercel = async (req: VercelRequest, res: VercelResponse) => {
