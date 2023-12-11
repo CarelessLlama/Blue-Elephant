@@ -1,5 +1,7 @@
 import createDebug from 'debug';
 
+import { Project } from '../models/Project';
+
 import { Scenes } from 'telegraf';
 
 import {
@@ -29,7 +31,7 @@ const askForProjectName = async (ctx: BotContext) => {
 
 const handleProjectName = async (ctx: BotContext) => {
     try {
-        if (!ctx.message) {
+        if (!ctx.message || !ctx.from) {
             throw new UnknownError(
                 'An unknown error occurred. Please try again later.',
             );
@@ -49,6 +51,9 @@ const handleProjectName = async (ctx: BotContext) => {
         }
 
         // Save the project name and ask for the next piece of information
+        ctx.scene.session.project = new Project(0, 0, '', '', [[]], []);
+        ctx.scene.session.project.setName(text);
+        ctx.scene.session.project.setUserId(ctx.from.id);
         await ctx.reply(
             `Project name saved. Please enter a short description for your project.`,
         );
@@ -81,7 +86,43 @@ const askForProjectDescription = async (ctx: BotContext) => {
         }
         // Save the project description and ask for the next piece of information
         debug(`Valid project description: ${text}`);
-        await ctx.reply(`Project description saved. Exiting scene now.`);
+        console.log(ctx.scene.session.project);
+        ctx.scene.session.project.setDescription(text);
+        await ctx.reply(
+            `Project description saved. Please enter the project members' names, delimited by commas and no spaces.`,
+        );
+        return ctx.wizard.next();
+    } catch (error) {
+        const errorMessage = (error as Error).message;
+        debug(errorMessage);
+        await ctx.reply(errorMessage);
+        return ctx.scene.reenter();
+    }
+};
+
+const askForProjectMembers = async (ctx: BotContext) => {
+    try {
+        if (!ctx.message) {
+            throw new UnknownError(
+                'An unknown error occurred. Please try again later.',
+            );
+        }
+        if (!('text' in ctx.message)) {
+            throw new InvalidInputTypeError(
+                'Invalid input type. Please enter a text message.',
+            );
+        }
+        const text = ctx.message.text;
+        if (!text) {
+            throw new InvalidTextError(
+                'Please enter a valid string representing group members, delimited by commas and no spaces.',
+            );
+        }
+        // Save the project description and ask for the next piece of information
+        debug(`Valid project members' inputs: ${text}`);
+        ctx.scene.session.project.setPersons(text);
+        await ctx.reply(`Project members saved. Exiting scene now.`);
+        console.log(ctx.scene.session.project);
         return ctx.scene.leave();
     } catch (error) {
         const errorMessage = (error as Error).message;
@@ -96,6 +137,7 @@ const addProjectScene = new Scenes.WizardScene<BotContext>(
     askForProjectName,
     handleProjectName,
     askForProjectDescription,
+    askForProjectMembers,
 );
 
 export { addProjectScene };

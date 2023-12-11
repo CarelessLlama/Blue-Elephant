@@ -1,11 +1,13 @@
-import { Scenes, Context } from 'telegraf';
-import { Update } from 'telegraf/typings/core/types/typegram';
+import { Scenes, Context, session } from 'telegraf';
+import { Project } from './models/Project';
+
+interface SessionData extends Scenes.WizardSessionData {
+    project: Project;
+}
 
 interface BotContext extends Context {
-    counter: number;
-  
-    scene: Scenes.SceneContextScene<BotContext, Scenes.WizardSessionData>;
-  
+    scene: Scenes.SceneContextScene<BotContext, SessionData>;
+
     wizard: Scenes.WizardContextWizard<BotContext>;
 }
 
