@@ -1,0 +1,34 @@
+# This file was adapted from the SE-EDU Brownfield Project: https://github.com/nus-cs2103-AY2324S1/tp
+
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                platform: [ubuntu-latest, macos-latest, windows-latest]
+        runs-on: ${{ matrix.platform }}
+
+        steps:
+            - name: Set up repository
+              uses: actions/checkout@main
+
+            - name: Set up repository
+              uses: actions/checkout@main
+              with:
+                  ref: master
+
+            - name: Merge to master
+              run: git checkout --progress --force ${{ github.sha }}
+
+            - name: Run repository-wide tests
+              if: runner.os == 'Linux'
+              working-directory: ${{ github.workspace }}/.github
+              run: ./run-checks.sh
+
+            - name: Upload coverage reports to Codecov
+              uses: codecov/codecov-action@v3
+              env:
+                  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
