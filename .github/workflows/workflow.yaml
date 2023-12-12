@@ -38,7 +38,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - run: npm install
-            - run: npm run test -- "--passWithNoTests" "--collectCoverageFrom='.{ts,js}'"
+            - run: npm run test -- "--passWithNoTests" "--collectCoverageFrom='*.{ts,js}'"
 
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v3
