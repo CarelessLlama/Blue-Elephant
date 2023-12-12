@@ -2,7 +2,6 @@ import createDebug from 'debug';
 
 import { author, name, version } from '../../package.json';
 
-
 const debug = createDebug('bot:add_project_command');
 
 /**
@@ -16,11 +15,16 @@ const viewProject = () => async (ctx: any) => {
         for (const name in ctx.projectMembers) {
             message += `*Project Member:* ${name}\n`;
         }
-        debug(`${name} has requested information about a project named ${ctx.projectName}.`);
+        debug(
+            `${name} has requested information about a project named ${ctx.projectName}.`,
+        );
         await ctx.replyWithMarkdownV2(message, { parse_mode: 'Markdown' });
     } catch (error) {
         debug(error);
-        await ctx.replyWithMarkdownV2(`Oops, unable to view project information! Please try again later.`, { parse_mode: 'Markdown' });
+        await ctx.replyWithMarkdownV2(
+            `Oops, unable to view project information! Please try again later.`,
+            { parse_mode: 'Markdown' },
+        );
     }
 };
 

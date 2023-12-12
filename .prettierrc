@@ -1,7 +1,8 @@
 {
-  "tabWidth": 4,
-  "useTabs": false,
-  "semi": true,
-  "singleQuote": true,
-  "editor.formatOnSave": true
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "editor.formatOnSave": true,
+    "endOfLine": "lf"
 }
