@@ -5,13 +5,19 @@ import { Scenes, Markup } from 'telegraf';
 import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
 import { BotContext } from '../BotContext';
+import { Project } from '../models/Project';
 
 const debug = createDebug('bot:generate_existing_projects_command');
+
+interface ProjectContainer {
+    proj: Project;
+}
 
 const modifyProject = async (ctx: BotContext) => {
     try {
         debug(`Entering modifyProject scene.`);
-        console.log(ctx.scene.session.project);
+        const state = ctx.wizard.state as ProjectContainer;
+        console.log(state.proj);
         await ctx.reply(
             `Project retrieved. What do you want to do?`,
             Markup.keyboard([
