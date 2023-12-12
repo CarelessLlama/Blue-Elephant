@@ -1,34 +1,17 @@
-# Telegram Bot Vercel Boilerplate
+# Blue Elephant Project (Working title)
 
-Telegram Bot Vercel Boilerplate based on Node.js and [Telegraf](https://github.com/telegraf/telegraf) framework.
+Telegram app for allocating a fixed number of groups that try to group new people together each round.
 
-This template inspired by [Telegram Bot Boilerplate](https://github.com/yakovlevyuri/telegram-bot-boilerplate) for easily deploy to [Vercel](https://vercel.com).
-
-[![Live Demo](https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://medium.com/@7rodma/deploy-a-serverless-telegram-chatbot-using-vercel-57665d942a58)
-
-## Before you start
-
-First rename `.env-sample` file to `.env` and fill in all necessary values.
-
-```
-BOT_TOKEN="<YOUR_BOT_API_TOKEN>"
-```
-
-## Start your server
-
-```
-npm install
-npm dev
-```
-
-## Production
-
-You can fork this template and do the necessary changes you need. Then you when are done with your changes simply goto [vercel git import](https://vercel.com/import/git).
-
-Reference to [this update](https://vercel.com/docs/security/deployment-protection#migrating-to-standard-protection), you need turn off `Vercel Authentication`, Settings => Deployment Protection
-
-Feel free to create PR!
+More details to be added later.
 
 ## Demo
 
-You can see a working version of the bot at [@Node_api_m_bot](https://t.me/Node_api_m_bot)
+You can see a working version of the bot at [@grouper_bot](https://t.me/grouper123_bot)
+
+## How to use
+
+To be added later.
+
+## Acknowledgements
+
+This project is made with the [Telegram Bot Vercel Boilerplate](https://github.com/sollidy/telegram-bot-vercel-boilerplate) code.
