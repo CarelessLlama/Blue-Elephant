@@ -6,4 +6,8 @@ module.exports = {
     clearMocks: true,
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',
+    collectCoverageFrom: ['src/**/*.ts'],
+    roots: ['<rootDir>/test', '<rootDir>/src'],
+    testRegex: '((\\.|/*.)(test))\\.ts?$',
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };
