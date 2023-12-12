@@ -1,4 +1,4 @@
-[![CI](https://github.com/sopa301/Blue-Elephant/actions/workflows/workflow.yaml/badge.svg)](https://github.com/sopa301/Blue-Elephant/actions/workflows/workflow.yaml)
+[![CI](https://github.com/CarelessLlama/Blue-Elephant/actions/workflows/workflow.yaml/badge.svg)](https://github.com/CarelessLlama/Blue-Elephant/actions/workflows/workflow.yaml)
 
 # Blue Elephant Project (Working title)
 
