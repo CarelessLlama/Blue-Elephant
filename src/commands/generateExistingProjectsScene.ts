@@ -12,7 +12,7 @@ import { BotContext } from '../BotContext';
 
 const debug = createDebug('bot:existing_projects_command');
 
-const viewExistingProjects = async (ctx: BotContext) => {
+const viewExistingProjectNames = async (ctx: BotContext) => {
     try {
         if (!ctx.from) {
             throw new UnknownError(
@@ -27,9 +27,7 @@ const viewExistingProjects = async (ctx: BotContext) => {
         );
         await ctx.reply(
             `Please choose an existing project that you want to view.`,
-            Markup.keyboard([
-                userProjectList, // Each array represents a row of buttons, to be retrieved from DB
-            ]).resize(),
+            Markup.keyboard([...userProjectList, 'Back']).resize(),
         );
         return ctx.wizard.next();
     } catch (error) {
@@ -62,13 +60,16 @@ const handleExistingProjects = async (ctx: BotContext) => {
             debug(`User selected to view ${text}`);
             const projId = ctx.scene.session.projectMap.get(text);
             let proj = await loadProject(new String(projId).toString());
-            console.log(proj);
+            ctx.scene.session.project = proj;
             await ctx.reply(
-                `Viewing existing project.`,
+                `Loading existing project.`,
                 Markup.removeKeyboard(),
             );
-            // Add logic to manipulate selected project here
-            return ctx.scene.leave();
+            console.log(ctx.scene.session.project);
+            // TODO: Context is not being passed to the next scene. Need to fix this.
+            return ctx.scene.enter('modifyProject', Markup.removeKeyboard());
+        } else if (text === 'Back') {
+            return ctx.scene.enter('mainMenu');
         } else {
             await ctx.reply(
                 'Invalid option. Please select a valid option from the keyboard.',
@@ -85,7 +86,7 @@ const handleExistingProjects = async (ctx: BotContext) => {
 
 const generateExistingProjectsScene = new Scenes.WizardScene<BotContext>(
     'existingProjects',
-    viewExistingProjects,
+    viewExistingProjectNames,
     handleExistingProjects,
 );
 
