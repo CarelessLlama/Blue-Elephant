@@ -1,6 +1,6 @@
 import mongoose, { Types } from 'mongoose';
 import { Project as DbProject } from '../db/schema/project';
-import { Project } from '../src/models/Project';
+import { Project } from '../models/Project';
 import { ObjectId } from 'mongodb';
 require('dotenv').config();
 
