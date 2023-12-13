@@ -23,6 +23,9 @@ jobs:
             - name: Merge to main
               run: git checkout --progress --force ${{ github.sha }}
 
+            - name: Install
+              run: npm install
+
             - name: Run ESLint
               run: npm run lint
 
