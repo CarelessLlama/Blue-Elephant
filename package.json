@@ -1,5 +1,5 @@
 {
-    "name": "Blue-Elephant",
+    "name": "blue-elephant",
     "version": "1.0",
     "description": "Blue Elephant Grouping Bot",
     "main": "src/index.ts",
