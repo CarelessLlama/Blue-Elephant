@@ -24,7 +24,7 @@ jobs:
               run: git checkout --progress --force ${{ github.sha }}
 
             - name: Run ESLint
-              run: npx lint
+              run: npm run lint
 
             - name: Run repository-wide tests
               if: runner.os == 'Linux'
