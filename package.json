@@ -1,6 +1,6 @@
 {
     "name": "blue-elephant",
-    "version": "1.0",
+    "version": "1.0.0",
     "description": "Blue Elephant Grouping Bot",
     "main": "src/index.ts",
     "author": "Ryan Poon (https://github.com/sopa301)\nNicholas Chia (https://github.com/nikele2001)",

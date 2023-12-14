@@ -4,7 +4,7 @@ import { Project } from '../models/Project';
 
 import { Scenes } from 'telegraf';
 
-import { createProject } from './../../db/functions';
+import { createProject } from '../db/functions';
 
 import {
     UnknownError,
