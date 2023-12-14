@@ -24,23 +24,22 @@ describe('connectToDatabase()', () => {
         spy.mockRestore();
     });
     it('should throw an error with missing URI', async () => {
-        expect.assertions(1);
+        expect.assertions(2);
+        const spy = jest.spyOn(mongoose, 'connect');
         connectToDatabase().catch((err) =>
             expect(err.toString()).toEqual(
                 'Error: Please define the MONGODB_URI environment variable',
             ),
         );
+        expect(spy).toHaveBeenCalledTimes(0);
     });
     it('should throw an error with invalid URI', async () => {
         expect.assertions(1);
         process.env.MONGODB_URI = 'invalidUri';
-        const spy = jest.spyOn(mongoose, 'connect');
-        spy.mockImplementationOnce((_) => {
-            throw new Error('Invalid URI.');
-        });
         connectToDatabase().catch((err) =>
-            expect(err.toString()).toEqual('Error: Invalid URI.'),
+            expect(err.toString()).toEqual(
+                'MongoParseError: Invalid scheme, expected connection string to start with "mongodb://" or "mongodb+srv://"',
+            ),
         );
-        spy.mockRestore();
     });
 });
