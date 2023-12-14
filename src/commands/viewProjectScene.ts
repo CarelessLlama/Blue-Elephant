@@ -18,7 +18,7 @@ const viewProject = async (ctx: BotContext) => {
     out += `Project Description: ${ctx.scene.session.project.getDescription()}\n`;
     out += `Project Members: ${ctx.scene.session.project.getPersons()}\n`;
     await ctx.reply(out);
-    return ctx.scene.enter('modifyProject', ctx.scene.session);
+    return ctx.scene.enter('manageProject', ctx.scene.session);
 };
 
 const viewProjectScene = new Scenes.WizardScene<BotContext>(

@@ -8,9 +8,9 @@ import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
 const debug = createDebug('bot:generate_existing_projects_command');
 
-const modifyProject = async (ctx: BotContext) => {
+const manageProject = async (ctx: BotContext) => {
     try {
-        debug(`Entering modifyProject scene.`);
+        debug(`Entering manageProject scene.`);
         updateSessionDataBetweenScenes(ctx);
         await ctx.reply(
             `Project retrieved. What do you want to do?`,
@@ -28,7 +28,7 @@ const modifyProject = async (ctx: BotContext) => {
     }
 };
 
-const handleModifyProjectOption = async (ctx: BotContext) => {
+const handleManageProjectOption = async (ctx: BotContext) => {
     try {
         if (!ctx.message || !ctx.from) {
             throw new UnknownError(
@@ -67,10 +67,10 @@ const handleModifyProjectOption = async (ctx: BotContext) => {
     }
 };
 
-const modifyProjectScene = new Scenes.WizardScene<BotContext>(
-    'modifyProject',
-    modifyProject,
-    handleModifyProjectOption,
+const manageProjectScene = new Scenes.WizardScene<BotContext>(
+    'manageProject',
+    manageProject,
+    handleManageProjectOption,
 );
 
-export { modifyProjectScene };
+export { manageProjectScene };
