@@ -17,6 +17,9 @@ jobs:
         steps:
             - name: Set up repository
               uses: actions/checkout@main
+
+            - name: Set up repository
+              uses: actions/checkout@main
               with:
                   ref: main
 
