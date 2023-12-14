@@ -132,8 +132,7 @@ const askForProjectMembers = async (ctx: BotContext) => {
             project.getAdjMatrix(),
         );
         await ctx.reply(`Project members saved. Exiting scene now.`);
-        console.log(project);
-        return ctx.scene.leave();
+        return ctx.scene.enter('mainMenu', ctx.scene.session);
     } catch (error) {
         const errorMessage = (error as Error).message;
         debug(errorMessage);
