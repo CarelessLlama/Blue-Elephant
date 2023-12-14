@@ -1,7 +1,5 @@
 import createDebug from 'debug';
 
-import { Project } from '../models/Project';
-
 import { Scenes, Markup } from 'telegraf';
 
 import { deleteProject } from '../db/functions';

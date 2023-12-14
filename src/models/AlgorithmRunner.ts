@@ -1,5 +1,5 @@
 import { Project } from './Project';
-import { SortedEdgeGenerator, Edge } from './SortedEdgeGenerator';
+import { SortedEdgeGenerator } from './SortedEdgeGenerator';
 
 /**
  * Class that runs the algorithm to generate optimal groupings for a project
@@ -9,8 +9,8 @@ class AlgorithmRunner {
 
     /**
      * Run the algorithm
-     * @param project Project to run the algorithm on
-     * @param numGroups Number of groups to split the project into
+     * @param project - Project to run the algorithm on
+     * @param numGroups - Number of groups to split the project into
      * @returns array of groups
      */
     public static run(project: Project, numGroups: number) {
@@ -19,7 +19,7 @@ class AlgorithmRunner {
         const groupSize = Math.floor(numPeople / numGroups);
         const sortedEdgeGenerator = new SortedEdgeGenerator(adjMatrix);
         let nodes = Array.from({ length: numPeople }, (_, i) => i);
-        let tmp: number[] = [];
+        const tmp: number[] = [];
         while (tmp.length < numGroups) {
             const edge = sortedEdgeGenerator.next();
             const node1 = edge.node1;
@@ -49,10 +49,10 @@ class AlgorithmRunner {
 
     /**
      * Retrieve the index of the group that minimizes the cost of adding a node to it
-     * @param adjMatrix Adjacency matrix of the project
-     * @param groupings Groupings of the project
-     * @param node Node to add to a group
-     * @param groupSize Group size
+     * @param adjMatrix - Adjacency matrix of the project
+     * @param groupings - Groupings of the project
+     * @param node - Node to add to a group
+     * @param groupSize - Group size
      * @returns index of the group that minimizes the cost of adding a node to it
      */
 
@@ -89,9 +89,9 @@ class AlgorithmRunner {
 
     /**
      * Retrieve total cost of adding a node to a group
-     * @param adjMatrix adjacency matrix of the project
-     * @param group group to add node to
-     * @param node node to add to group
+     * @param adjMatrix - adjacency matrix of the project
+     * @param group - group to add node to
+     * @param node - node to add to group
      * @returns cost of adding node to group
      */
     private static getCost(

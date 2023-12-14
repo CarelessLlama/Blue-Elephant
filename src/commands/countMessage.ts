@@ -1,7 +1,6 @@
 import createDebug from 'debug';
 
-import { author, name, version } from '../../package.json';
-
+import { name } from '../../package.json';
 
 const debug = createDebug('bot:count_command');
 
@@ -20,7 +19,10 @@ const countMessage = () => async (ctx: any) => {
         await ctx.replyWithMarkdownV2(message, { parse_mode: 'Markdown' });
     } catch (error) {
         debug(error);
-        await ctx.replyWithMarkdownV2(`Something went wrong. Please try again later.`, { parse_mode: 'Markdown' });
+        await ctx.replyWithMarkdownV2(
+            `Something went wrong. Please try again later.`,
+            { parse_mode: 'Markdown' },
+        );
     }
 };
 

@@ -41,7 +41,6 @@ const handleModifyProjectOption = async (ctx: BotContext) => {
                 'Invalid input type. Please enter a text message.',
             );
         }
-        const text = ctx.message.text;
         if (ctx.message?.text === 'View Project Details') {
             debug('User selected "View Project Details"');
             let out = `Project Details are as follows:\n`;

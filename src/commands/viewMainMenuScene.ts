@@ -32,7 +32,7 @@ const handleMainMenuOption = async (ctx: BotContext) => {
                 'Invalid input type. Please enter a text message.',
             );
         }
-        const text = ctx.message.text;
+        // const text = ctx.message.text;
         if (ctx.message?.text === 'Create New Project') {
             debug('User selected "Create New Project"');
             // Handle 'Create New Project' option

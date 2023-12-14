@@ -1,8 +1,8 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import { Project as DbProject } from '../db/schema/project';
 import { Project } from '../models/Project';
 import { ObjectId } from 'mongodb';
-require('dotenv').config();
+import {} from 'dotenv/config';
 
 /**
  * Connects the app to the database server.
@@ -19,7 +19,7 @@ export async function connectToDatabase() {
 /**
  * Updates the entry in the database with the project given by its id.
  *
- * @param proj project to save to database
+ * @param proj - project to save to database
  */
 export async function saveProject(proj: Project) {
     const id = new ObjectId(proj.getId());
@@ -32,7 +32,7 @@ export async function saveProject(proj: Project) {
 /**
  * Retrieves a project from the database by its id.
  *
- * @param projectId id of the project to retrieve
+ * @param projectId - id of the project to retrieve
  * @returns Project object
  */
 export async function loadProject(projectId: string): Promise<Project> {
@@ -55,11 +55,11 @@ export async function loadProject(projectId: string): Promise<Project> {
 /**
  * Creates a project in the database and returns the project id.
  *
- * @param userId Project owner id
- * @param name Name of project
- * @param description Description of project
- * @param members Member list
- * @param relationGraph Graph of relations between members
+ * @param userId - Project owner id
+ * @param name - Name of project
+ * @param description - Description of project
+ * @param members - Member list
+ * @param relationGraph - Graph of relations between members
  * @returns Project id as a string
  */
 export async function createProject(
@@ -68,7 +68,7 @@ export async function createProject(
     description: string,
     members: string[],
     relationGraph: number[][],
-): Promise<String> {
+): Promise<string> {
     const project = await DbProject.create({
         userId: userId,
         name: name,
@@ -82,12 +82,12 @@ export async function createProject(
 /**
  * Creates a map of project names to their ids from the database.
  *
- * @param userId Queries the database using this id
+ * @param userId - Queries the database using this id
  * @returns Map containing project name - project id pairs.
  */
 export async function getProjects(
     userId: number,
-): Promise<Map<String, Number>> {
+): Promise<Map<string, number>> {
     const projects = await DbProject.find({ userId: userId }).exec();
     const map = new Map();
     for (const proj of projects) {
@@ -99,7 +99,7 @@ export async function getProjects(
 /**
  * Deletes a project from the database by its id.
  *
- * @param projectId id of the project to be deleted
+ * @param projectId - id of the project to be deleted
  */
 export async function deleteProject(projectId: string) {
     await DbProject.deleteOne({ _id: new ObjectId(projectId) }).exec();
