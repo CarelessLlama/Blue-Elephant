@@ -23,10 +23,19 @@ export async function connectToDatabase() {
  */
 export async function saveProject(proj: Project) {
     const id = new ObjectId(proj.getId());
-    const result = await DbProject.replaceOne(id, proj).exec();
-    if (result.modifiedCount == 0) {
-        throw new Error('Failed to save. Project Id: ' + proj.getId());
+    const userId = proj.getUserid(); // need to refactor naming convention of getUserId() method
+    const project = await DbProject.findOne({ _id: id, userId: userId });
+
+    if (project) {
+        project.name = proj.getName();
+        project.description = proj.getDescription();
+        // Update any other fields that you want to update
+
+        await project.save();
     }
+    // if (result.modifiedCount == 0) {
+    //     throw new Error('Failed to save. Project Id: ' + proj.getId());
+    // }
 }
 
 /**

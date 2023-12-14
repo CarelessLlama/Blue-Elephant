@@ -8,9 +8,9 @@ import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
 const debug = createDebug('bot:generate_existing_projects_command');
 
-const modifyProject = async (ctx: BotContext) => {
+const manageProject = async (ctx: BotContext) => {
     try {
-        debug(`Entering modifyProject scene.`);
+        debug(`Entering manageProject scene.`);
         updateSessionDataBetweenScenes(ctx);
         await ctx.reply(
             `Project retrieved. What do you want to do?`,
@@ -28,7 +28,7 @@ const modifyProject = async (ctx: BotContext) => {
     }
 };
 
-const handleModifyProjectOption = async (ctx: BotContext) => {
+const handleManageProjectOption = async (ctx: BotContext) => {
     try {
         if (!ctx.message || !ctx.from) {
             throw new UnknownError(
@@ -42,13 +42,7 @@ const handleModifyProjectOption = async (ctx: BotContext) => {
             );
         }
         if (ctx.message?.text === 'View Project Details') {
-            debug('User selected "View Project Details"');
-            let out = `Project Details are as follows:\n`;
-            out += `Project Name: ${ctx.scene.session.project.getName()}\n`;
-            out += `Project Description: ${ctx.scene.session.project.getDescription()}\n`;
-            out += `Project Members: ${ctx.scene.session.project.getPersons()}\n`;
-            await ctx.reply(out);
-            return ctx.scene.reenter();
+            return ctx.scene.enter('viewProject', ctx.scene.session);
         } else if (ctx.message?.text === 'Edit Project') {
             debug('User selected "Edit Project"');
             // to do: edit project scene
@@ -73,10 +67,10 @@ const handleModifyProjectOption = async (ctx: BotContext) => {
     }
 };
 
-const modifyProjectScene = new Scenes.WizardScene<BotContext>(
-    'modifyProject',
-    modifyProject,
-    handleModifyProjectOption,
+const manageProjectScene = new Scenes.WizardScene<BotContext>(
+    'manageProject',
+    manageProject,
+    handleManageProjectOption,
 );
 
-export { modifyProjectScene };
+export { manageProjectScene };

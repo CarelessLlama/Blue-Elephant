@@ -6,7 +6,7 @@
     "author": "Ryan Poon (https://github.com/sopa301)\nNicholas Chia (https://github.com/nikele2001)",
     "homepage": "https://github.com/nikele2001/Blue-Elephant",
     "dependencies": {
-        "@vercel/node": "^3.0.11",
+        "@vercel/node": "^3.0.12",
         "dotenv-cli": "^7.3.0",
         "mongodb": "^6.3.0",
         "mongoose": "^8.0.3",

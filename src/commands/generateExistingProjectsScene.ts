@@ -63,7 +63,7 @@ const handleExistingProjects = async (ctx: BotContext) => {
                 `Loading existing project.`,
                 Markup.removeKeyboard(),
             );
-            return ctx.scene.enter('modifyProject', ctx.scene.session);
+            return ctx.scene.enter('manageProject', ctx.scene.session);
         } else if (text === 'Back') {
             return ctx.scene.enter('mainMenu');
         } else {
