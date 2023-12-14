@@ -4,7 +4,7 @@ import { Scenes, Markup } from 'telegraf';
 
 import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
-import { getProjects, loadProject } from '../../db/functions';
+import { getProjects, loadProject } from '../db/functions';
 
 import { Project } from './../models/Project';
 

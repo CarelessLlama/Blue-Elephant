@@ -1,0 +1,52 @@
+# This file was adapted from workflow files from the SE-EDU Brownfield
+# Project: https://github.com/nus-cs2103-AY2324S1/tp and the CATcher Project:
+# https://github.com/CATcher-org/CATcher
+
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                platform: [ubuntu-latest, macos-latest, windows-latest]
+                node-version: [14.x]
+        runs-on: ${{ matrix.platform }}
+
+        steps:
+            - name: Set up repository
+              uses: actions/checkout@main
+
+            - name: Set up repository
+              uses: actions/checkout@main
+              with:
+                  ref: main
+
+            - name: Merge to main
+              run: git checkout --progress --force ${{ github.sha }}
+
+            - name: Install
+              run: npm install
+
+            - name: Run ESLint
+              run: npm run lint
+
+            - name: Run repository-wide tests
+              if: runner.os == 'Linux'
+              working-directory: ${{ github.workspace }}/.github
+              run: ./run-checks.sh
+
+            - uses: actions/checkout@v2
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - run: npm install
+            - run: npm run test -- "--coverage"
+
+            - name: Upload coverage reports to Codecov
+              uses: codecov/codecov-action@v3
+              env:
+                  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

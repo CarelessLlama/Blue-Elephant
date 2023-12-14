@@ -13,7 +13,7 @@ import {
 } from './commands';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
-import { connectToDatabase } from '../db/functions';
+import { connectToDatabase } from './db/functions';
 require('dotenv').config();
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
