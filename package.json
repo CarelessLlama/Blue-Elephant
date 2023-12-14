@@ -1,5 +1,5 @@
 {
-    "name": "Blue-Elephant",
+    "name": "blue-elephant",
     "version": "1.0.0",
     "description": "Blue Elephant Grouping Bot",
     "main": "src/index.ts",
@@ -16,8 +16,12 @@
         "@types/debug": "^4.1.12",
         "@types/jest": "^29.5.11",
         "@types/node": "^20.10.0",
+        "@typescript-eslint/eslint-plugin": "^6.7.0",
+        "@typescript-eslint/parser": "^6.7.0",
         "@vercel/ncc": "^0.38.1",
         "debug": "^4.3.4",
+        "eslint": "^8.49.0",
+        "eslint-plugin-tsdoc": "^0.2.17",
         "jest": "^29.7.0",
         "nodemon": "^3.0.1",
         "prettier": "^3.1.0",
@@ -30,7 +34,8 @@
         "devWindows": "@powershell -Command $env:DEBUG='bot*';dotenv -- -- nodemon -e ts -x ts-node src/index.ts",
         "build": "ncc build src/index.ts -o public -m",
         "test": "jest",
-        "prettier": "prettier --write 'src/**/*.ts'"
+        "prettier": "prettier --write 'src/**/*.ts'",
+        "lint": "eslint -f unix \"src/**/*.{ts,tsx}\""
     },
     "compilerOptions": {
         "types": [
