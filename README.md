@@ -1,3 +1,5 @@
+[![CI](https://github.com/CarelessLlama/Blue-Elephant/actions/workflows/workflow.yaml/badge.svg)](https://github.com/CarelessLlama/Blue-Elephant/actions/workflows/workflow.yaml)
+
 # Blue Elephant Project (Working title)
 
 Telegram app for allocating a fixed number of groups that try to group new people together each round.

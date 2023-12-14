@@ -1,40 +1,40 @@
 {
-  "name": "Blue-Elephant",
-  "version": "1.0",
-  "description": "Blue Elephant Grouping Bot",
-  "main": "src/index.ts",
-  "author": "Ryan Poon (https://github.com/sopa301)\nNicholas Chia (https://github.com/nikele2001)",
-  "homepage": "https://github.com/nikele2001/Blue-Elephant",
-  "dependencies": {
-    "@vercel/node": "^3.0.11",
-    "dotenv-cli": "^7.3.0",
-    "mongodb": "^6.3.0",
-    "mongoose": "^8.0.3",
-    "telegraf": "^4.15.0"
-  },
-  "devDependencies": {
-    "@types/debug": "^4.1.12",
-    "@types/jest": "^29.5.11",
-    "@types/node": "^20.10.0",
-    "@vercel/ncc": "^0.38.1",
-    "debug": "^4.3.4",
-    "jest": "^29.7.0",
-    "nodemon": "^3.0.1",
-    "prettier": "^3.1.0",
-    "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.2"
-  },
-  "scripts": {
-    "dev": "DEBUG=bot* dotenv -- nodemon -e ts -x ts-node src/index.ts",
-    "devWindows": "@powershell -Command $env:DEBUG='bot*';dotenv -- -- nodemon -e ts -x ts-node src/index.ts",
-    "build": "ncc build src/index.ts -o public -m",
-    "test": "jest",
-    "prettier": "prettier --write 'src/**/*.ts'"
-  },
-  "compilerOptions": {
-    "types": [
-      "jest"
-    ]
-  }
+    "name": "Blue-Elephant",
+    "version": "1.0.0",
+    "description": "Blue Elephant Grouping Bot",
+    "main": "src/index.ts",
+    "author": "Ryan Poon (https://github.com/sopa301)\nNicholas Chia (https://github.com/nikele2001)",
+    "homepage": "https://github.com/nikele2001/Blue-Elephant",
+    "dependencies": {
+        "@vercel/node": "^3.0.11",
+        "dotenv-cli": "^7.3.0",
+        "mongodb": "^6.3.0",
+        "mongoose": "^8.0.3",
+        "telegraf": "^4.15.0"
+    },
+    "devDependencies": {
+        "@types/debug": "^4.1.12",
+        "@types/jest": "^29.5.11",
+        "@types/node": "^20.10.0",
+        "@vercel/ncc": "^0.38.1",
+        "debug": "^4.3.4",
+        "jest": "^29.7.0",
+        "nodemon": "^3.0.1",
+        "prettier": "^3.1.0",
+        "ts-jest": "^29.1.1",
+        "ts-node": "^10.9.1",
+        "typescript": "^5.3.2"
+    },
+    "scripts": {
+        "dev": "DEBUG=bot* dotenv -- nodemon -e ts -x ts-node src/index.ts",
+        "devWindows": "@powershell -Command $env:DEBUG='bot*';dotenv -- -- nodemon -e ts -x ts-node src/index.ts",
+        "build": "ncc build src/index.ts -o public -m",
+        "test": "jest",
+        "prettier": "prettier --write 'src/**/*.ts'"
+    },
+    "compilerOptions": {
+        "types": [
+            "jest"
+        ]
+    }
 }
