@@ -3,6 +3,10 @@ import { BotContext } from './BotContext';
 
 import {
     about,
+    countMessage,
+    modifyProjectScene,
+    editProject,
+    deleteProjectScene,
     addProjectScene,
     viewMainMenuScene,
     generateExistingProjectsScene,
@@ -32,7 +36,9 @@ bot.telegram.setMyCommands([
 const stage = new Scenes.Stage<BotContext>([
     addProjectScene,
     viewMainMenuScene,
+    modifyProjectScene,
     generateExistingProjectsScene,
+    deleteProjectScene,
 ]);
 
 bot.use(session());
