@@ -3,10 +3,6 @@ import { BotContext } from './BotContext';
 
 import {
     about,
-    countMessage,
-    viewProject,
-    editProject,
-    deleteProject,
     addProjectScene,
     viewMainMenuScene,
     generateExistingProjectsScene,
@@ -14,7 +10,7 @@ import {
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 import { connectToDatabase } from './db/functions';
-require('dotenv').config();
+import {} from 'dotenv/config';
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';

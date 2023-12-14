@@ -38,7 +38,7 @@ export class Project {
         this.adjMatrix.forEach((row) => row.splice(personIndex, 1));
     }
 
-    public getGroupings(numGroups: number): void {}
+    // public getGroupings(numGroups: number): void {}
 
     public getId(): string {
         return this.id;

@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 
-import { author, name, version } from '../../package.json';
+import { name } from '../../package.json';
 
 const debug = createDebug('bot:add_project_command');
 

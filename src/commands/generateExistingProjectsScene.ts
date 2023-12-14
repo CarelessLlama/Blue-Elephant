@@ -6,7 +6,7 @@ import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
 import { getProjects, loadProject } from '../db/functions';
 
-import { Project } from './../models/Project';
+// import { Project } from './../models/Project';
 
 import { BotContext } from '../BotContext';
 
@@ -61,7 +61,7 @@ const handleExistingProjects = async (ctx: BotContext) => {
         if (userProjectList.includes(text)) {
             debug(`User selected to view ${text}`);
             const projId = ctx.scene.session.projectMap.get(text);
-            let proj = await loadProject(new String(projId).toString());
+            const proj = await loadProject(new String(projId).toString());
             console.log(proj);
             await ctx.reply(
                 `Viewing existing project.`,

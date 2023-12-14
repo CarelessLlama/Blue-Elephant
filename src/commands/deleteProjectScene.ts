@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 
-import { author, name, version } from '../../package.json';
+import { name } from '../../package.json';
 
 const debug = createDebug('bot:add_project_command');
 
@@ -11,7 +11,7 @@ const debug = createDebug('bot:add_project_command');
 const deleteProject = () => async (ctx: any) => {
     try {
         // Add project deletion logic here
-        let message = `Successfully deleted the project ${ctx.projectName}!`;
+        const message = `Successfully deleted the project ${ctx.projectName}!`;
         debug(`${name} has deleted a project named ${ctx.projectName}.`);
         await ctx.replyWithMarkdownV2(message, { parse_mode: 'Markdown' });
     } catch (error) {

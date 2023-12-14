@@ -14,7 +14,7 @@ class Edge {
 
     /**
      * Compare this edge to another edge
-     * @param other Edge to compare to
+     * @param other - Edge to compare to
      * @returns a negative number if this edge is less than the other edge, 0 if they are equal, and a positive number if this edge is greater than the other edge
      */
     public compareTo(other: Edge): number {
