@@ -9,7 +9,7 @@ import {} from 'dotenv/config';
  */
 export async function connectToDatabase() {
     const dbUri = process.env.MONGODB_URI;
-    if (!dbUri) {
+    if (dbUri == undefined) {
         throw new Error('Please define the MONGODB_URI environment variable');
     }
     await mongoose.connect(dbUri);
@@ -29,13 +29,10 @@ export async function saveProject(proj: Project) {
     if (project) {
         project.name = proj.getName();
         project.description = proj.getDescription();
-        // Update any other fields that you want to update
-
+        project.members = proj.getPersons();
+        project.relationGraph = proj.getAdjMatrix();
         await project.save();
     }
-    // if (result.modifiedCount == 0) {
-    //     throw new Error('Failed to save. Project Id: ' + proj.getId());
-    // }
 }
 
 /**

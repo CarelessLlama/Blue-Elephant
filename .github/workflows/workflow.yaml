@@ -26,25 +26,19 @@ jobs:
             - name: Merge to main
               run: git checkout --progress --force ${{ github.sha }}
 
-            - name: Install
-              run: npm install
-
-            - name: Run ESLint
-              run: npm run lint
-
             - name: Run repository-wide tests
               if: runner.os == 'Linux'
               working-directory: ${{ github.workspace }}/.github
               run: ./run-checks.sh
 
-            - uses: actions/checkout@v2
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v1
-              with:
-                  node-version: ${{ matrix.node-version }}
+            - name: Install dependencies
+              run: npm install
 
-            - run: npm install
-            - run: npm run test -- "--coverage"
+            - name: Run ESLint
+              run: npm run lint
+
+            - name: Run code tests
+              run: npm run test -- "--coverage"
 
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v3
