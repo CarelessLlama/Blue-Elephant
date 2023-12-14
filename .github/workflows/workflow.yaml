@@ -17,16 +17,13 @@ jobs:
         steps:
             - name: Set up repository
               uses: actions/checkout@main
-
-            - name: Set up repository
-              uses: actions/checkout@main
               with:
                   ref: main
 
             - name: Merge to main
               run: git checkout --progress --force ${{ github.sha }}
 
-            - name: Install
+            - name: Install dependencies
               run: npm install
 
             - name: Run ESLint
@@ -43,8 +40,8 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - run: npm install
-            - run: npm run test -- "--coverage"
+            - name: Run code tests
+              run: npm run test -- "--coverage"
 
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v3

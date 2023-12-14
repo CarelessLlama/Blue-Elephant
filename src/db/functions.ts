@@ -9,7 +9,7 @@ import {} from 'dotenv/config';
  */
 export async function connectToDatabase() {
     const dbUri = process.env.MONGODB_URI;
-    if (!dbUri) {
+    if (dbUri == undefined) {
         throw new Error('Please define the MONGODB_URI environment variable');
     }
     await mongoose.connect(dbUri);
