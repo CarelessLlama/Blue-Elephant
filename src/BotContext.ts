@@ -12,4 +12,14 @@ interface BotContext extends Context {
     wizard: Scenes.WizardContextWizard<BotContext>;
 }
 
-export { BotContext };
+function updateSessionDataBetweenScenes(ctx: BotContext): void {
+    try {
+        const state = ctx.wizard.state as SessionData;
+        ctx.scene.session.project = state.project;
+        ctx.scene.session.projectMap = state.projectMap;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export { BotContext, SessionData, updateSessionDataBetweenScenes };

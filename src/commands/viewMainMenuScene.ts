@@ -6,7 +6,7 @@ import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
 import { BotContext } from '../BotContext';
 
-const debug = createDebug('bot:main_menu_command');
+const debug = createDebug('bot:generate_existing_projects_command');
 
 const askForMainMenuOption = async (ctx: BotContext) => {
     debug(`Entering Main Menu scene.`);
