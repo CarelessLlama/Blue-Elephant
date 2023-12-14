@@ -65,9 +65,7 @@ const handleExistingProjects = async (ctx: BotContext) => {
                 `Loading existing project.`,
                 Markup.removeKeyboard(),
             );
-            console.log(ctx.scene.session.project);
-            // TODO: Context is not being passed to the next scene. Need to fix this.
-            return ctx.scene.enter('modifyProject', Markup.removeKeyboard());
+            return ctx.scene.enter('modifyProject', ctx.scene.session);
         } else if (text === 'Back') {
             return ctx.scene.enter('mainMenu');
         } else {

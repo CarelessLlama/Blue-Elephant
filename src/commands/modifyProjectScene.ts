@@ -4,14 +4,14 @@ import { Scenes, Markup } from 'telegraf';
 
 import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
-import { BotContext } from '../BotContext';
+import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
 const debug = createDebug('bot:generate_existing_projects_command');
 
 const modifyProject = async (ctx: BotContext) => {
     try {
         debug(`Entering modifyProject scene.`);
-        console.log(ctx.scene.session.project);
+        updateSessionDataBetweenScenes(ctx);
         await ctx.reply(
             `Project retrieved. What do you want to do?`,
             Markup.keyboard([
@@ -53,14 +53,13 @@ const handleModifyProjectOption = async (ctx: BotContext) => {
         } else if (ctx.message?.text === 'Edit Project') {
             debug('User selected "Edit Project"');
             // to do: edit project scene
-            return ctx.scene.enter('editProject', Markup.removeKeyboard());
+            return ctx.scene.enter('editProject', ctx.scene.session);
         } else if (ctx.message?.text === 'Delete Project') {
             debug('User selected "Delete Project"');
-            console.log(ctx.scene.session.project);
-            return ctx.scene.enter('deleteProject', Markup.removeKeyboard());
+            return ctx.scene.enter('deleteProject', ctx.scene.session);
         } else if (ctx.message?.text === 'Back') {
             debug('User selected "Back"');
-            return ctx.scene.enter('existingProjects', Markup.removeKeyboard());
+            return ctx.scene.enter('existingProjects', ctx.scene.session);
         } else {
             await ctx.reply(
                 'Invalid option. Please select a valid option from the keyboard.',
