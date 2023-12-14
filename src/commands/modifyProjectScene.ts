@@ -42,13 +42,7 @@ const handleModifyProjectOption = async (ctx: BotContext) => {
             );
         }
         if (ctx.message?.text === 'View Project Details') {
-            debug('User selected "View Project Details"');
-            let out = `Project Details are as follows:\n`;
-            out += `Project Name: ${ctx.scene.session.project.getName()}\n`;
-            out += `Project Description: ${ctx.scene.session.project.getDescription()}\n`;
-            out += `Project Members: ${ctx.scene.session.project.getPersons()}\n`;
-            await ctx.reply(out);
-            return ctx.scene.reenter();
+            return ctx.scene.enter('viewProject', ctx.scene.session);
         } else if (ctx.message?.text === 'Edit Project') {
             debug('User selected "Edit Project"');
             // to do: edit project scene

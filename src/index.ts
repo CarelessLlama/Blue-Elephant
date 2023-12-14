@@ -7,6 +7,7 @@ import {
     deleteProjectScene,
     addProjectScene,
     viewMainMenuScene,
+    viewProjectScene,
     generateExistingProjectsScene,
 } from './commands';
 import { VercelRequest, VercelResponse } from '@vercel/node';
@@ -37,6 +38,7 @@ const stage = new Scenes.Stage<BotContext>([
     modifyProjectScene,
     generateExistingProjectsScene,
     deleteProjectScene,
+    viewProjectScene,
 ]);
 
 bot.use(session());
