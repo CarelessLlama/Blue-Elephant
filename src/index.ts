@@ -3,9 +3,7 @@ import { BotContext } from './BotContext';
 
 import {
     about,
-    countMessage,
     modifyProjectScene,
-    editProject,
     deleteProjectScene,
     addProjectScene,
     viewMainMenuScene,

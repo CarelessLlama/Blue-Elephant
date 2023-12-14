@@ -57,7 +57,7 @@ const handleExistingProjects = async (ctx: BotContext) => {
         if (userProjectList.includes(text)) {
             debug(`User selected to view ${text}`);
             const projId = ctx.scene.session.projectMap.get(text);
-            let proj = await loadProject(new String(projId).toString());
+            const proj = await loadProject(new String(projId).toString());
             ctx.scene.session.project = proj;
             await ctx.reply(
                 `Loading existing project.`,
