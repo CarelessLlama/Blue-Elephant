@@ -8,7 +8,7 @@ import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
-import { saveProject } from '../db/functions';
+import { updateProject } from '../db/functions';
 
 const debug = createDebug('bot:generate_groupings_command');
 
@@ -55,7 +55,7 @@ const handleNumGroups = async (ctx: BotContext) => {
     const logic = new AlgorithmRunner(ctx.scene.session.project, numGroups);
     const groupings = logic.prettyPrintGroupings();
     logic.updateInteractionsBasedOnGeneratedGroupings();
-    saveProject(ctx.scene.session.project);
+    updateProject(ctx.scene.session.project);
     const out = `Here are the groupings:\n${groupings}.
     Do not delete this message as you will need it to view the groupings again.`;
     await ctx.reply(out);

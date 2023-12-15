@@ -19,7 +19,7 @@ const editProject = async (ctx: BotContext) => {
     await ctx.reply(
         `What do you want to edit?`,
         Markup.keyboard([
-            ['Add Person', 'Delete Person'],
+            ['Add People', 'Delete People'],
             ['Edit Project Name', 'Edit Project Description'],
             ['Back'],
         ]).resize(),
@@ -40,18 +40,12 @@ const handleEditProjectOption = async (ctx: BotContext) => {
                 'Invalid input type. Please enter a text message.',
             );
         }
-        if (ctx.message?.text === 'Add Person') {
-            debug('User selected "Add Person"');
-            // TODO: add person scene
-            // return ctx.scene.enter('addPerson', ctx.scene.session);
-            await ctx.reply('This feature is not yet implemented.');
-            return ctx.scene.enter('mainMenu');
-        } else if (ctx.message?.text === 'Delete Person') {
-            debug('User selected "Delete Person"');
-            // TODO: delete person scene
-            // return ctx.scene.enter('deletePerson', ctx.scene.session);
-            await ctx.reply('This feature is not yet implemented.');
-            return ctx.scene.enter('mainMenu');
+        if (ctx.message?.text === 'Add People') {
+            debug('User selected "Add People"');
+            return ctx.scene.enter('addPeople', ctx.scene.session);
+        } else if (ctx.message?.text === 'Delete People') {
+            debug('User selected "Delete People"');
+            return ctx.scene.enter('deletePeople', ctx.scene.session);
         } else if (ctx.message?.text === 'Edit Project Name') {
             debug('User selected "Edit Project Name"');
             return ctx.scene.enter('editProjectName', ctx.scene.session);

@@ -4,7 +4,7 @@ import { Scenes } from 'telegraf';
 
 import { UnknownError, InvalidInputTypeError } from '../../exceptions';
 
-import { saveProject } from '../../db/functions';
+import { updateProject } from '../../db/functions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
 
@@ -39,9 +39,9 @@ const handleEditProjectDescription = async (ctx: BotContext) => {
         }
 
         ctx.scene.session.project.setDescription(ctx.message.text);
-        saveProject(ctx.scene.session.project);
-        await ctx.reply(`Project description updated. Returning to menu.`);
-        return ctx.scene.enter('mainMenu', ctx.scene.session);
+        updateProject(ctx.scene.session.project);
+        await ctx.reply(`Project description updated.`);
+        return ctx.scene.enter('editProject', ctx.scene.session);
     } catch (error) {
         const errorMessage = (error as Error).message;
         debug(errorMessage);

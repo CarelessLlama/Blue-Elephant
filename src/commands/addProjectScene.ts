@@ -53,10 +53,10 @@ const handleProjectName = async (ctx: BotContext) => {
         }
 
         // Save the project name and ask for the next piece of information
-        ctx.scene.session.project = new Project('', 0, '', '', [[]], []);
-        const project = ctx.scene.session.project;
-        project.setName(text);
-        project.setUserId(ctx.from.id);
+        ctx.scene.session.project = Project.createBlankProject(
+            text,
+            ctx.from.id,
+        );
         await ctx.reply(
             `Project name saved. Please enter a short description for your project.`,
         );
@@ -123,14 +123,9 @@ const askForProjectMembers = async (ctx: BotContext) => {
         // Save the project description and ask for the next piece of information
         debug(`Valid project members' inputs: ${text}`);
         const project = ctx.scene.session.project;
-        project.setPersons(text);
-        createProject(
-            project.getUserid(),
-            project.getName(),
-            project.getDescription(),
-            project.getPersons(),
-            project.getAdjMatrix(),
-        );
+        const personArr = text.split(',');
+        project.setPersons(personArr);
+        createProject(project);
         await ctx.reply(`Project members saved. Exiting scene now.`);
         return ctx.scene.enter('mainMenu', ctx.scene.session);
     } catch (error) {

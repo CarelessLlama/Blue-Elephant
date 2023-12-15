@@ -19,6 +19,8 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
 import { connectToDatabase } from './db/functions';
 import {} from 'dotenv/config';
+import { addPeopleScene } from './commands/editProject/addPeopleScene';
+import { deletePeopleScene } from './commands/editProject/deletePeopleScene';
 
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const ENVIRONMENT = process.env.NODE_ENV || '';
@@ -47,6 +49,8 @@ const stage = new Scenes.Stage<BotContext>([
     editProjectScene,
     editProjectNameScene,
     editProjectDescriptionScene,
+    addPeopleScene,
+    deletePeopleScene,
     generateGroupingsScene,
     resetInteractionsScene,
 ]);
