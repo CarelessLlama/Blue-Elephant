@@ -43,7 +43,8 @@ const askForProjectMembers = async (ctx: BotContext) => {
         }
         debug(`Project members' inputs: ${text}`);
         const project = ctx.scene.session.project;
-        project.setPersons(text);
+        const personArr = text.split(',');
+        project.setPersons(personArr);
         saveProject(project);
         await ctx.reply(`Project members saved. Exiting scene now.`);
         return ctx.scene.enter('manageProject', ctx.scene.session);
