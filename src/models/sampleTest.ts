@@ -1,7 +1,6 @@
-// import { AlgorithmRunner } from './AlgorithmRunner';
+import { AlgorithmRunner } from './AlgorithmRunner';
 import { AlgorithmTester } from './TestAlgorithmUtil';
 
 const project = AlgorithmTester.generateProject(9);
-console.log(project.getAdjMatrix());
-// const groupings = AlgorithmRunner.run(project, 3);
-// console.log(groupings);
+const logic = new AlgorithmRunner(project, 3); // 3 is the number of groups desired
+console.log(logic.prettyPrintGroupings());

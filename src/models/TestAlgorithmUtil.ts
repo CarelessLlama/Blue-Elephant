@@ -32,12 +32,14 @@ class AlgorithmTester {
      */
     public static generateProject(n: number): Project {
         return new Project(
-            '1',
+            'projid1',
             1,
-            'test',
-            'test',
+            'projname',
+            'projdesc',
             this.generateSymmetricalMatrix(n),
-            ['test1', 'test2'],
+            Array(n)
+                .fill(null)
+                .map((_, i) => 'name ' + i.toString()),
         );
     }
 }
