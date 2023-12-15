@@ -6,7 +6,7 @@ import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
-import { saveProject } from '../db/functions';
+import { updateProject } from '../db/functions';
 
 const debug = createDebug('bot:reset_interactions_command');
 
@@ -44,7 +44,7 @@ const handleResetInteractions = async (ctx: BotContext) => {
 
     if (ctx.message?.text === 'Yes') {
         ctx.scene.session.project.resetInteractions();
-        saveProject(ctx.scene.session.project);
+        updateProject(ctx.scene.session.project);
         await ctx.reply('Interactions have been reset.');
     } else if (ctx.message?.text === 'No') {
         await ctx.reply('Interactions have not been reset.');
