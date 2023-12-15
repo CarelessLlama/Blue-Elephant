@@ -56,7 +56,7 @@ const handleNumGroups = async (ctx: BotContext) => {
     const groupings = logic.prettyPrintGroupings();
     logic.updateInteractionsBasedOnGeneratedGroupings();
     saveProject(ctx.scene.session.project);
-    const out = `Here are the groupings:\n${groupings}. 
+    const out = `Here are the groupings:\n${groupings}.
     Do not delete this message as you will need it to view the groupings again.`;
     await ctx.reply(out);
     return ctx.scene.enter('mainMenu');
