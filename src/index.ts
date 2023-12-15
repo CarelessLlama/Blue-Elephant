@@ -12,6 +12,8 @@ import {
     viewMainMenuScene,
     viewProjectScene,
     generateExistingProjectsScene,
+    generateGroupingsScene,
+    resetInteractionsScene,
 } from './commands';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { development, production } from './core';
@@ -45,6 +47,8 @@ const stage = new Scenes.Stage<BotContext>([
     editProjectScene,
     editProjectNameScene,
     editProjectDescriptionScene,
+    generateGroupingsScene,
+    resetInteractionsScene,
 ]);
 
 bot.use(session());

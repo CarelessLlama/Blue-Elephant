@@ -8,3 +8,5 @@ export * from './deleteProjectScene';
 export * from './viewMainMenuScene';
 export * from './generateExistingProjectsScene';
 export * from './viewProjectScene';
+export * from './generateGroupingsScene';
+export * from './resetInteractionsScene';

@@ -15,8 +15,12 @@ const manageProject = async (ctx: BotContext) => {
         await ctx.reply(
             `Project retrieved. What do you want to do?`,
             Markup.keyboard([
-                ['View Project Details', 'Edit Project'],
-                ['Delete Project', 'Back'],
+                [
+                    'View Project Details',
+                    'Generate Groupings',
+                    'Reset Interactions',
+                ],
+                ['Edit Project', 'Delete Project', 'Back'],
             ]).resize(),
         );
         return ctx.wizard.next();
@@ -43,9 +47,14 @@ const handleManageProjectOption = async (ctx: BotContext) => {
         }
         if (ctx.message?.text === 'View Project Details') {
             return ctx.scene.enter('viewProject', ctx.scene.session);
+        } else if (ctx.message?.text === 'Generate Groupings') {
+            debug('User selected "Generate Groupings"');
+            return ctx.scene.enter('generateGroupings', ctx.scene.session);
+        } else if (ctx.message?.text === 'Reset Interactions') {
+            debug('User selected "Reset Interactions"');
+            return ctx.scene.enter('resetInteractions', ctx.scene.session);
         } else if (ctx.message?.text === 'Edit Project') {
             debug('User selected "Edit Project"');
-            // to do: edit project scene
             return ctx.scene.enter('editProject', ctx.scene.session);
         } else if (ctx.message?.text === 'Delete Project') {
             debug('User selected "Delete Project"');
