@@ -1,12 +1,11 @@
 import { ObjectId } from 'mongodb';
-import { Person } from './Person';
 
 export class Project {
     private id: string;
     private userid: number;
     private name: string;
     private description: string;
-    private personArr: string[];
+    private personArr: string[]; // names need to be unique
     private adjMatrix: number[][];
 
     constructor(
@@ -33,17 +32,13 @@ export class Project {
 
     public addPerson(personName: string): void {
         Project.validatePerson(personName);
+        if (personName in this.personArr) {
+            throw new Error('Person already exists in project.');
+        }
         const num_members = this.personArr.length;
         this.personArr.push(personName);
         this.adjMatrix.forEach((row) => row.push(0));
         this.adjMatrix.push(new Array(num_members + 1).fill(0));
-    }
-
-    public removePerson(person: Person): void {
-        const personIndex = this.personArr.indexOf(person.toString());
-        this.personArr.splice(personIndex, 1);
-        this.adjMatrix.splice(personIndex, 1);
-        this.adjMatrix.forEach((row) => row.splice(personIndex, 1));
     }
 
     // public getGroupings(numGroups: number): void {}
@@ -87,16 +82,36 @@ export class Project {
         this.description = description;
     }
 
-    public setPersons(personArrString: string): void {
-        const personArr = personArrString.split(',');
+    public setPersons(personArr: string[]): void {
         Project.validatePeople(personArr);
-        this.personArr = personArr;
+        this.personArr = [];
+        personArr.forEach((person) => this.addPerson(person)); // TODO: make this more efficient
         const n = this.personArr.length;
         this.setAdjMatrix(
             Array(n)
                 .fill(null)
                 .map(() => Array(n).fill(0)),
         );
+    }
+    public removePersons(personArr: string[]): void {
+        Project.validatePeople(personArr);
+        let indexesToRemove: number[] = [];
+        for (const person of personArr) {
+            const index = this.personArr.indexOf(person);
+            indexesToRemove.push(index);
+            this.personArr = this.personArr.splice(index, 1);
+        }
+        // remove rows and columns from adjMatrix
+        indexesToRemove = indexesToRemove.toSorted();
+        indexesToRemove.reverse(); // so we don't have to recalculate indexes
+        for (const index of indexesToRemove) {
+            this.adjMatrix.splice(index, 1);
+        }
+        for (let i = 0; i < this.adjMatrix.length; i++) {
+            for (const index of indexesToRemove) {
+                this.adjMatrix[i] = this.adjMatrix[i].splice(index, 1);
+            }
+        }
     }
 
     public setAdjMatrix(adjMatrix: number[][]): void {
@@ -140,12 +155,12 @@ export class Project {
         }
     }
     public static isValidPerson(person: string): boolean {
-        return person.length >= 3;
+        return person.length >= 1;
     }
     public static validatePerson(person: string): void {
         if (!Project.isValidPerson(person)) {
             throw new Error(
-                'Invalid person name. A person name needs to be at least 3 characters long.',
+                'Invalid person name. A person name needs to be at least 1 character long.',
             );
         }
     }
