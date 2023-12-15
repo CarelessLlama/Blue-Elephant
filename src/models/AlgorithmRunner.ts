@@ -115,7 +115,7 @@ class AlgorithmRunner {
                     groupings[i],
                     node,
                 );
-                if (cost < minCost) {
+                if (cost < minCost && groupings[i].length < groupSize + 1) {
                     minCost = cost;
                     minIndex = i;
                 }
