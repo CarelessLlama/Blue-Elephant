@@ -226,4 +226,16 @@ export class Project {
     public presentInDatabase(): boolean {
         return this.id !== 'NOT SET';
     }
+
+    public incrementInteractions(person1: number, person2: number): void {
+        this.adjMatrix[person1][person2]++;
+        this.adjMatrix[person2][person1]++;
+    }
+
+    public resetInteractions(): void {
+        const n = this.personArr.length;
+        this.adjMatrix = Array(n)
+            .fill(null)
+            .map(() => Array(n).fill(0));
+    }
 }

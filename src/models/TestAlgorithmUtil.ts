@@ -26,18 +26,40 @@ class AlgorithmTester {
     }
 
     /**
-     * Generate a project
+     * Generate a project with random weights
      * @param n - Size of the project
-     * @returns a project
+     * @returns a project with random weights
      */
-    public static generateProject(n: number): Project {
+    public static generateProjectWithRandomWeights(n: number): Project {
         return new Project(
-            '1',
+            'projid1',
             1,
-            'test',
-            'test',
+            'projname',
+            'projdesc',
             this.generateSymmetricalMatrix(n),
-            ['test1', 'test2'],
+            Array(n)
+                .fill(null)
+                .map((_, i) => 'name ' + i.toString()),
+        );
+    }
+
+    /**
+     * Generate a project with no weights
+     * @param n - Size of the project
+     * @returns a project with no weights
+     */
+    public static generateProjectWithNoWeights(n: number): Project {
+        return new Project(
+            'projid1',
+            1,
+            'projname',
+            'projdesc',
+            Array(n)
+                .fill(null)
+                .map(() => Array(n).fill(0)),
+            Array(n)
+                .fill(null)
+                .map((_, i) => 'name ' + i.toString()),
         );
     }
 }

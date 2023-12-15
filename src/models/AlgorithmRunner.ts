@@ -5,7 +5,13 @@ import { SortedEdgeGenerator } from './SortedEdgeGenerator';
  * Class that runs the algorithm to generate optimal groupings for a project
  */
 class AlgorithmRunner {
-    public constructor() {}
+    private groupings: number[][];
+    private project: Project;
+
+    public constructor(project: Project, numGroups: number) {
+        this.project = project;
+        this.groupings = this.run(project, numGroups);
+    }
 
     /**
      * Run the algorithm
@@ -13,7 +19,7 @@ class AlgorithmRunner {
      * @param numGroups - Number of groups to split the project into
      * @returns array of groups
      */
-    public static run(project: Project, numGroups: number) {
+    public run(project: Project, numGroups: number): number[][] {
         const adjMatrix = project.getAdjMatrix();
         const numPeople = adjMatrix.length;
         const groupSize = Math.floor(numPeople / numGroups);
@@ -43,8 +49,39 @@ class AlgorithmRunner {
             );
             groupings[groupIndex].push(node);
         });
-        console.log(groupings);
+        this.groupings = groupings;
+        this.project = project;
         return groupings;
+    }
+
+    public mapPersonIdToName(): string[][] {
+        return this.groupings.map((group) => {
+            return group.map((personId) => {
+                return this.project.getPersons()[personId];
+            });
+        });
+    }
+
+    public prettyPrintGroupings(): string {
+        return this.mapPersonIdToName()
+            .map((index, group) => {
+                return `Group ${group + 1}: ${index.join(', ')}`;
+            })
+            .join('\n');
+    }
+
+    public updateInteractionsBasedOnGeneratedGroupings(): void {
+        this.groupings.map((group) => {
+            for (let i = 0; i < group.length; i++) {
+                for (let j = i + 1; j < group.length; j++) {
+                    this.project.incrementInteractions(group[i], group[j]);
+                }
+            }
+        });
+    }
+
+    public incrementInteractions(person1: number, person2: number): void {
+        this.project.incrementInteractions(person1, person2);
     }
 
     /**
@@ -78,7 +115,7 @@ class AlgorithmRunner {
                     groupings[i],
                     node,
                 );
-                if (cost < minCost) {
+                if (cost < minCost && groupings[i].length < groupSize + 1) {
                     minCost = cost;
                     minIndex = i;
                 }
