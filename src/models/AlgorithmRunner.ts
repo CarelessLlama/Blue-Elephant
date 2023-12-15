@@ -70,6 +70,20 @@ class AlgorithmRunner {
             .join('\n');
     }
 
+    public updateInteractionsBasedOnGeneratedGroupings(): void {
+        this.groupings.map((group) => {
+            for (let i = 0; i < group.length; i++) {
+                for (let j = i + 1; j < group.length; j++) {
+                    this.project.incrementInteractions(group[i], group[j]);
+                }
+            }
+        });
+    }
+
+    public incrementInteractions(person1: number, person2: number): void {
+        this.project.incrementInteractions(person1, person2);
+    }
+
     /**
      * Retrieve the index of the group that minimizes the cost of adding a node to it
      * @param adjMatrix - Adjacency matrix of the project
