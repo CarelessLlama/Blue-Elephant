@@ -32,108 +32,82 @@ const askForProjectName = async (ctx: BotContext) => {
 };
 
 const handleProjectName = async (ctx: BotContext) => {
-    try {
-        if (!ctx.message || !ctx.from) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-
-        const text = ctx.message.text;
-        if (!text || invalidTextName(text)) {
-            throw new InvalidTextError(
-                'Please enter a valid project name. A project name needs to be at least 3 characters long and cannot start with /.',
-            );
-        }
-
-        // Save the project name and ask for the next piece of information
-        ctx.scene.session.project = Project.createBlankProject(
-            text,
-            ctx.from.id,
+    if (!ctx.message || !ctx.from) {
+        throw new UnknownError(
+            'An unknown error occurred. Please try again later.',
         );
-        await ctx.reply(
-            `Project name saved. Please enter a short description for your project.`,
-        );
-        return ctx.wizard.next();
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
     }
+
+    if (!('text' in ctx.message)) {
+        throw new InvalidInputTypeError(
+            'Invalid input type. Please enter a text message.',
+        );
+    }
+
+    const text = ctx.message.text;
+    if (!text || invalidTextName(text)) {
+        throw new InvalidTextError(
+            'Please enter a valid project name. A project name needs to be at least 3 characters long and cannot start with /.',
+        );
+    }
+
+    // Save the project name and ask for the next piece of information
+    ctx.scene.session.project = Project.createBlankProject(text, ctx.from.id);
+    await ctx.reply(
+        `Project name saved. Please enter a short description for your project.`,
+    );
+    return ctx.wizard.next();
 };
 
 const askForProjectDescription = async (ctx: BotContext) => {
-    try {
-        if (!ctx.message) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        const text = ctx.message.text;
-        if (!text) {
-            throw new InvalidTextError(
-                'Please enter a valid project description.',
-            );
-        }
-        // Save the project description and ask for the next piece of information
-        debug(`Valid project description: ${text}`);
-        ctx.scene.session.project.setDescription(text);
-        await ctx.reply(
-            `Project description saved. Please enter the project members' names, delimited by commas and no spaces.`,
+    if (!ctx.message) {
+        throw new UnknownError(
+            'An unknown error occurred. Please try again later.',
         );
-        return ctx.wizard.next();
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
     }
+    if (!('text' in ctx.message)) {
+        throw new InvalidInputTypeError(
+            'Invalid input type. Please enter a text message.',
+        );
+    }
+    const text = ctx.message.text;
+    if (!text) {
+        throw new InvalidTextError('Please enter a valid project description.');
+    }
+    // Save the project description and ask for the next piece of information
+    debug(`Valid project description: ${text}`);
+    ctx.scene.session.project.setDescription(text);
+    await ctx.reply(
+        `Project description saved. Please enter the project members' names, delimited by commas and no spaces.`,
+    );
+    return ctx.wizard.next();
 };
 
 const askForProjectMembers = async (ctx: BotContext) => {
-    try {
-        if (!ctx.message) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        const text = ctx.message.text;
-        if (!text) {
-            throw new InvalidTextError(
-                'Please enter a valid string representing group members, delimited by commas and no spaces.',
-            );
-        }
-        // Save the project description and ask for the next piece of information
-        debug(`Valid project members' inputs: ${text}`);
-        const project = ctx.scene.session.project;
-        const personArr = text.split(',');
-        project.setPersons(personArr);
-        createProject(project);
-        await ctx.reply(`Project members saved. Exiting scene now.`);
-        return ctx.scene.enter('mainMenu', ctx.scene.session);
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
+    if (!ctx.message) {
+        throw new UnknownError(
+            'An unknown error occurred. Please try again later.',
+        );
     }
+    if (!('text' in ctx.message)) {
+        throw new InvalidInputTypeError(
+            'Invalid input type. Please enter a text message.',
+        );
+    }
+    const text = ctx.message.text;
+    if (!text) {
+        throw new InvalidTextError(
+            'Please enter a valid string representing group members, delimited by commas and no spaces.',
+        );
+    }
+    // Save the project description and ask for the next piece of information
+    debug(`Valid project members' inputs: ${text}`);
+    const project = ctx.scene.session.project;
+    const personArr = text.split(',');
+    project.setPersons(personArr);
+    createProject(project);
+    await ctx.reply(`Project members saved. Exiting scene now.`);
+    return ctx.scene.enter('mainMenu', ctx.scene.session);
 };
 
 const addProjectScene = new Scenes.WizardScene<BotContext>(
