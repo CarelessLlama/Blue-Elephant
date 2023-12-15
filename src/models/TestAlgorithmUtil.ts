@@ -31,32 +31,12 @@ class AlgorithmTester {
      * @returns a project with random weights
      */
     public static generateProjectWithRandomWeights(n: number): Project {
-        return new Project(
+        return Project.createProject(
             'projid1',
             1,
             'projname',
             'projdesc',
             this.generateSymmetricalMatrix(n),
-            Array(n)
-                .fill(null)
-                .map((_, i) => 'name ' + i.toString()),
-        );
-    }
-
-    /**
-     * Generate a project with no weights
-     * @param n - Size of the project
-     * @returns a project with no weights
-     */
-    public static generateProjectWithNoWeights(n: number): Project {
-        return new Project(
-            'projid1',
-            1,
-            'projname',
-            'projdesc',
-            Array(n)
-                .fill(null)
-                .map(() => Array(n).fill(0)),
             Array(n)
                 .fill(null)
                 .map((_, i) => 'name ' + i.toString()),
