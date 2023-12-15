@@ -5,6 +5,19 @@ import { ObjectId } from 'mongodb';
 import {} from 'dotenv/config';
 
 /**
+ * Creates an ObjectId from a string according to the MongoDB documentation.
+ *
+ * @param id - id to be converted to ObjectId
+ * @returns ObjectId
+ */
+function makeObjectId(id: string) {
+    if (!ObjectId.isValid(id)) {
+        throw new Error('Invalid project id: ' + id);
+    }
+    return new ObjectId(id);
+}
+
+/**
  * Connects the app to the database server.
  */
 export async function connectToDatabase() {
@@ -13,7 +26,7 @@ export async function connectToDatabase() {
         throw new Error('Please define the MONGODB_URI environment variable');
     }
     await mongoose.connect(dbUri);
-    console.log('Connected to database.');
+    console.log('Connected to database');
 }
 
 /**
@@ -22,8 +35,8 @@ export async function connectToDatabase() {
  * @param proj - project to save to database
  */
 export async function saveProject(proj: Project) {
-    const id = new ObjectId(proj.getId());
-    const userId = proj.getUserid(); // need to refactor naming convention of getUserId() method
+    const id = makeObjectId(proj.getId());
+    const userId = proj.getUserid();
     const project = await DbProject.findOne({ _id: id, userId: userId });
 
     if (project) {
@@ -42,7 +55,8 @@ export async function saveProject(proj: Project) {
  * @returns Project object
  */
 export async function loadProject(projectId: string): Promise<Project> {
-    const project = await DbProject.findById(new ObjectId(projectId)).exec();
+    const id = makeObjectId(projectId);
+    const project = await DbProject.findById(id).exec();
     if (project == null) {
         throw new Error('Project cannot be found. Project Id: ' + projectId);
     }
@@ -61,28 +75,18 @@ export async function loadProject(projectId: string): Promise<Project> {
 /**
  * Creates a project in the database and returns the project id.
  *
- * @param userId - Project owner id
- * @param name - Name of project
- * @param description - Description of project
- * @param members - Member list
- * @param relationGraph - Graph of relations between members
+ * @param project - project to be created
  * @returns Project id as a string
  */
-export async function createProject(
-    userId: number,
-    name: string,
-    description: string,
-    members: string[],
-    relationGraph: number[][],
-): Promise<string> {
-    const project = await DbProject.create({
-        userId: userId,
-        name: name,
-        description: description,
-        members: members,
-        relationGraph: relationGraph,
+export async function createProject(project: Project): Promise<string> {
+    const dbProject = await DbProject.create({
+        userId: project.getUserid(),
+        name: project.getName(),
+        description: project.getDescription(),
+        members: project.getPersons(),
+        relationGraph: project.getAdjMatrix(),
     });
-    return Promise.resolve(project._id.toString());
+    return Promise.resolve(dbProject._id.toString());
 }
 
 /**
@@ -94,6 +98,7 @@ export async function createProject(
 export async function getProjects(
     userId: number,
 ): Promise<Map<string, number>> {
+    Project.validateUserId(userId);
     const projects = await DbProject.find({ userId: userId }).exec();
     const map = new Map();
     for (const proj of projects) {
@@ -108,5 +113,6 @@ export async function getProjects(
  * @param projectId - id of the project to be deleted
  */
 export async function deleteProject(projectId: string) {
-    await DbProject.deleteOne({ _id: new ObjectId(projectId) }).exec();
+    const id = makeObjectId(projectId);
+    await DbProject.deleteOne({ _id: id }).exec();
 }

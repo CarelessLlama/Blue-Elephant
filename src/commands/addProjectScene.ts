@@ -124,13 +124,7 @@ const askForProjectMembers = async (ctx: BotContext) => {
         debug(`Valid project members' inputs: ${text}`);
         const project = ctx.scene.session.project;
         project.setPersons(text);
-        createProject(
-            project.getUserid(),
-            project.getName(),
-            project.getDescription(),
-            project.getPersons(),
-            project.getAdjMatrix(),
-        );
+        createProject(project);
         await ctx.reply(`Project members saved. Exiting scene now.`);
         return ctx.scene.enter('mainMenu', ctx.scene.session);
     } catch (error) {
