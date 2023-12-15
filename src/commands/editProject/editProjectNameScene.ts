@@ -9,7 +9,7 @@ import {
 } from '../../exceptions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
-import { saveProject } from '../../db/functions';
+import { updateProject } from '../../db/functions';
 
 const debug = createDebug('bot:edit_project_name_command');
 
@@ -64,9 +64,9 @@ const handleEditProjectName = async (ctx: BotContext) => {
         }
 
         ctx.scene.session.project.setName(ctx.message.text);
-        saveProject(ctx.scene.session.project);
-        await ctx.reply(`Project name updated. Returning to menu.`);
-        return ctx.scene.enter('mainMenu', ctx.scene.session);
+        updateProject(ctx.scene.session.project);
+        await ctx.reply(`Project name updated.`);
+        return ctx.scene.enter('editProject', ctx.scene.session);
     } catch (error) {
         const errorMessage = (error as Error).message;
         debug(errorMessage);

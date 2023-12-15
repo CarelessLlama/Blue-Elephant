@@ -53,10 +53,10 @@ const handleProjectName = async (ctx: BotContext) => {
         }
 
         // Save the project name and ask for the next piece of information
-        ctx.scene.session.project = new Project('', 0, '', '', [[]], []);
-        const project = ctx.scene.session.project;
-        project.setName(text);
-        project.setUserId(ctx.from.id);
+        ctx.scene.session.project = Project.createBlankProject(
+            text,
+            ctx.from.id,
+        );
         await ctx.reply(
             `Project name saved. Please enter a short description for your project.`,
         );

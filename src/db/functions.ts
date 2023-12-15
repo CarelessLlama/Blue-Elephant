@@ -34,7 +34,10 @@ export async function connectToDatabase() {
  *
  * @param proj - project to save to database
  */
-export async function saveProject(proj: Project) {
+export async function updateProject(proj: Project) {
+    if (!proj.presentInDatabase()) {
+        throw new Error('Project not present in database');
+    }
     const id = makeObjectId(proj.getId());
     const userId = proj.getUserid();
     const project = await DbProject.findOne({ _id: id, userId: userId });
@@ -61,7 +64,7 @@ export async function loadProject(projectId: string): Promise<Project> {
         throw new Error('Project cannot be found. Project Id: ' + projectId);
     }
     return Promise.resolve(
-        new Project(
+        Project.createProject(
             project._id.toString(),
             project.userId,
             project.name,

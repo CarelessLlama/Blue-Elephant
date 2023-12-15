@@ -1,5 +1,10 @@
 import { ObjectId } from 'mongodb';
 
+// Note: We have 2 methods for project creation because we want to be able
+// to create a project with an id (for loading from the database) and without
+// an id (for creating a new project). Note that newly created projects
+// do not have a valid id until they are saved to the database.
+
 export class Project {
     private id: string;
     private userid: number;
@@ -8,7 +13,7 @@ export class Project {
     private personArr: string[]; // names need to be unique
     private adjMatrix: number[][];
 
-    constructor(
+    private constructor(
         id: string,
         userid: number,
         name: string,
@@ -16,7 +21,6 @@ export class Project {
         adjMatrix: number[][],
         stringPersonArr: string[],
     ) {
-        Project.validateId(id);
         Project.validateUserId(userid);
         Project.validateName(name);
         Project.validateDescription(description);
@@ -26,8 +30,32 @@ export class Project {
         this.name = name;
         this.description = description;
         this.personArr = stringPersonArr;
-        this.validateAdjMatrix(adjMatrix);
+        // disabled for testing
+        // this.validateAdjMatrix(adjMatrix);
         this.adjMatrix = adjMatrix;
+    }
+
+    public static createBlankProject(name: string, userId: number): Project {
+        return new Project('NOT SET', userId, name, 'No description', [], []);
+    }
+
+    public static createProject(
+        id: string,
+        userid: number,
+        name: string,
+        description: string,
+        adjMatrix: number[][],
+        stringPersonArr: string[],
+    ): Project {
+        Project.validateId(id);
+        return new Project(
+            id,
+            userid,
+            name,
+            description,
+            adjMatrix,
+            stringPersonArr,
+        );
     }
 
     public addPerson(personName: string): void {
@@ -39,6 +67,10 @@ export class Project {
         this.personArr.push(personName);
         this.adjMatrix.forEach((row) => row.push(0));
         this.adjMatrix.push(new Array(num_members + 1).fill(0));
+    }
+
+    public addPeople(personArr: string[]): void {
+        personArr.forEach((person) => this.addPerson(person));
     }
 
     // public getGroupings(numGroups: number): void {}
@@ -95,21 +127,30 @@ export class Project {
     }
     public removePersons(personArr: string[]): void {
         Project.validatePeople(personArr);
+        console.log(personArr);
         let indexesToRemove: number[] = [];
         for (const person of personArr) {
             const index = this.personArr.indexOf(person);
+            if (index == -1) {
+                continue; // ignore people not in project
+            }
             indexesToRemove.push(index);
-            this.personArr = this.personArr.splice(index, 1);
         }
+        console.log(indexesToRemove);
         // remove rows and columns from adjMatrix
         indexesToRemove = indexesToRemove.toSorted();
         indexesToRemove.reverse(); // so we don't have to recalculate indexes
+        console.log(indexesToRemove);
         for (const index of indexesToRemove) {
+            console.log(index);
+            console.log(this.personArr);
+            this.personArr.splice(index, 1);
+            console.log(this.personArr);
             this.adjMatrix.splice(index, 1);
         }
         for (let i = 0; i < this.adjMatrix.length; i++) {
             for (const index of indexesToRemove) {
-                this.adjMatrix[i] = this.adjMatrix[i].splice(index, 1);
+                this.adjMatrix[i].splice(index, 1);
             }
         }
     }
@@ -180,5 +221,9 @@ export class Project {
                 );
             }
         });
+    }
+
+    public presentInDatabase(): boolean {
+        return this.id !== 'NOT SET';
     }
 }

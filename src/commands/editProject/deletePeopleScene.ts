@@ -8,9 +8,10 @@ import {
     InvalidTextError,
 } from '../../exceptions';
 
-import { saveProject } from '../../db/functions';
+import { updateProject } from '../../db/functions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
+import { parsePeopleListString } from '../../util/userInput';
 
 const debug = createDebug('bot:edit_project_description_command');
 
@@ -41,11 +42,16 @@ const askForProjectMembers = async (ctx: BotContext) => {
                 'Please enter a valid string representing group members, delimited by commas and no spaces.',
             );
         }
+        if (ctx.message?.text === 'Back') {
+            debug('User selected "Back"');
+            return ctx.scene.enter('manageProject', ctx.scene.session);
+        }
         debug(`Project members' inputs: ${text}`);
         const project = ctx.scene.session.project;
-        const personArr = text.split(',');
+        const personArr = parsePeopleListString(text);
+        debug(`Removing ${personArr.length} project members: ${personArr}`);
         project.removePersons(personArr);
-        saveProject(project);
+        updateProject(project);
         await ctx.reply(`Project members removed. Exiting scene now.`);
         return ctx.scene.enter('manageProject', ctx.scene.session);
     } catch (error) {
