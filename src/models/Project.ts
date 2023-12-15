@@ -30,8 +30,7 @@ export class Project {
         this.name = name;
         this.description = description;
         this.personArr = stringPersonArr;
-        // disabled for testing
-        // this.validateAdjMatrix(adjMatrix);
+        this.validateAdjMatrix(adjMatrix);
         this.adjMatrix = adjMatrix;
     }
 
@@ -60,7 +59,7 @@ export class Project {
 
     public addPerson(personName: string): void {
         Project.validatePerson(personName);
-        if (personName in this.personArr) {
+        if (this.personArr.indexOf(personName) !== -1) {
             throw new Error('Person already exists in project.');
         }
         const num_members = this.personArr.length;
@@ -79,7 +78,7 @@ export class Project {
         return this.id;
     }
 
-    public getUserid(): number {
+    public getUserId(): number {
         return this.userid;
     }
 
@@ -127,7 +126,6 @@ export class Project {
     }
     public removePersons(personArr: string[]): void {
         Project.validatePeople(personArr);
-        console.log(personArr);
         let indexesToRemove: number[] = [];
         for (const person of personArr) {
             const index = this.personArr.indexOf(person);
@@ -136,16 +134,11 @@ export class Project {
             }
             indexesToRemove.push(index);
         }
-        console.log(indexesToRemove);
         // remove rows and columns from adjMatrix
         indexesToRemove = indexesToRemove.toSorted();
         indexesToRemove.reverse(); // so we don't have to recalculate indexes
-        console.log(indexesToRemove);
         for (const index of indexesToRemove) {
-            console.log(index);
-            console.log(this.personArr);
             this.personArr.splice(index, 1);
-            console.log(this.personArr);
             this.adjMatrix.splice(index, 1);
         }
         for (let i = 0; i < this.adjMatrix.length; i++) {

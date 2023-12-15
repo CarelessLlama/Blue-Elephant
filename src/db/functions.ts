@@ -39,7 +39,7 @@ export async function updateProject(proj: Project) {
         throw new Error('Project not present in database');
     }
     const id = makeObjectId(proj.getId());
-    const userId = proj.getUserid();
+    const userId = proj.getUserId();
     const project = await DbProject.findOne({ _id: id, userId: userId });
 
     if (project) {
@@ -83,7 +83,7 @@ export async function loadProject(projectId: string): Promise<Project> {
  */
 export async function createProject(project: Project): Promise<string> {
     const dbProject = await DbProject.create({
-        userId: project.getUserid(),
+        userId: project.getUserId(),
         name: project.getName(),
         description: project.getDescription(),
         members: project.getPersons(),
