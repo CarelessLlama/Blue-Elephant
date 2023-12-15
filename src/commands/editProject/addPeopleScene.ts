@@ -19,7 +19,7 @@ const addPeople = async (ctx: BotContext) => {
     debug('Entered addPeople scene.');
     updateSessionDataBetweenScenes(ctx);
     await ctx.reply(
-        `Please enter the project members' names, delimited by commas and no spaces. To cancel, type "Back".`,
+        `Please enter the project members' names, delimited by commas. To cancel, type "Back".`,
     );
     return ctx.wizard.next();
 };
@@ -39,7 +39,7 @@ const askForProjectMembers = async (ctx: BotContext) => {
         const text = ctx.message.text;
         if (!text) {
             throw new InvalidTextError(
-                'Please enter a valid string representing group members, delimited by commas and no spaces.',
+                'Please enter a valid string representing group members, delimited by commas.',
             );
         }
         if (ctx.message?.text === 'Back') {
