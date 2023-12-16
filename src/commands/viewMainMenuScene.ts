@@ -31,8 +31,8 @@ const menuOptions = Array.from(menuOptionsToScenesMap.keys());
 /**
  * Handles the selection of a main menu option.
  * @param ctx - The bot context.
- * @throws {UnknownError} If ctx.message is undefined.
- * @throws {InvalidInputTypeError} If ctx.message does not contain a 'text' property.
+ * @throws If ctx.message is undefined, it throws an unknownError.
+ * @throws If ctx.message does not contain a 'text' property, it throws an invalidInputTypeError.
  */
 const handleMainMenuSelection = async (ctx: BotContext) => {
     if (!ctx.message) {
@@ -74,9 +74,9 @@ const askForMainMenuOption = async (ctx: BotContext) => {
 /**
  * Handles the selection of a main menu option.
  * @param ctx - The bot context.
- * @throws {UnknownError} If ctx.message is undefined.
- * @throws {InvalidInputTypeError} If ctx.message does not contain a 'text' property.
- * @throws {InvalidTextError} If ctx.message.text is not a valid option.
+ * @throws If ctx.message is undefined, it throws an UnknownError.
+ * @throws If ctx.message does not contain a 'text' property, it throws an InvalidInputTypeError.
+ * @throws If ctx.message.text is not a valid option, it throws an InvalidTextError.
  */
 const handleMainMenuOption = async (ctx: BotContext) => {
     try {
