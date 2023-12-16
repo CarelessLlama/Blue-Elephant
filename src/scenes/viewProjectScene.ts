@@ -2,7 +2,7 @@ import createDebug from 'debug';
 
 import { Scenes } from 'telegraf';
 
-import { BotContext, updateSessionDataBetweenScenes } from './../BotContext';
+import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
 const debug = createDebug('bot:view_project_details_command');
 

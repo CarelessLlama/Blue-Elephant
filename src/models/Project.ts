@@ -174,7 +174,8 @@ export class Project {
     public static validateName(name: string): void {
         if (!Project.isValidName(name)) {
             throw new Error(
-                'Invalid project name. A project name needs to be at least 3 characters long and cannot start with /.',
+                'Invalid project name. A project name needs to be at least 3 characters long ' +
+                    'and cannot start with /.',
             );
         }
     }
@@ -204,13 +205,15 @@ export class Project {
     private validateAdjMatrix(adjMatrix: number[][]): void {
         if (adjMatrix.length !== this.personArr.length) {
             throw new Error(
-                'Invalid adjacency matrix. The number of rows in the adjacency matrix must be equal to the number of people in the project.',
+                'Invalid adjacency matrix. The number of rows in the adjacency matrix must be equal' +
+                    'to the number of people in the project.',
             );
         }
         adjMatrix.forEach((row) => {
             if (row.length !== this.personArr.length) {
                 throw new Error(
-                    'Invalid adjacency matrix. The number of columns in the adjacency matrix must be equal to the number of people in the project.',
+                    'Invalid adjacency matrix. The number of columns in the adjacency ' +
+                        'matrix must be equal to the number of people in the project.',
                 );
             }
         });
