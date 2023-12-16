@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { Project as DbProject } from './schema/project';
+import { Project as DbProject } from './schema/Project';
 import { Project } from '../models/Project';
 import { ObjectId } from 'mongodb';
 import {} from 'dotenv/config';
