@@ -69,6 +69,21 @@ export class Project {
     }
 
     public addPeople(personArr: string[]): void {
+        personArr.forEach((person) => {
+            Project.validatePerson(person);
+            if (this.personArr.indexOf(person) !== -1) {
+                throw new Error(
+                    person + ' already exists in project. Nobody was added.',
+                );
+            }
+            if (personArr.indexOf(person) !== personArr.lastIndexOf(person)) {
+                throw new Error(
+                    'Unable to add ' +
+                        person +
+                        ' to project twice. Nobody was added.',
+                );
+            }
+        });
         personArr.forEach((person) => this.addPerson(person));
     }
 
@@ -116,7 +131,7 @@ export class Project {
     public setPersons(personArr: string[]): void {
         Project.validatePeople(personArr);
         this.personArr = [];
-        personArr.forEach((person) => this.addPerson(person)); // TODO: make this more efficient
+        this.addPeople(personArr);
         const n = this.personArr.length;
         this.setAdjMatrix(
             Array(n)
