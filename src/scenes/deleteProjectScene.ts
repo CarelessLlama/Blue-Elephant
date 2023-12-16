@@ -2,7 +2,7 @@ import createDebug from 'debug';
 
 import { Scenes, Markup } from 'telegraf';
 
-import { deleteProject } from '../db/functions';
+import { deleteProjectInDb } from '../db/functions';
 
 import {
     UnknownError,
@@ -45,7 +45,7 @@ const handleDeleteProject = async (ctx: BotContext) => {
         if (text === 'Yes') {
             debug(`User selected to delete the project.`);
             const project = ctx.scene.session.project;
-            await deleteProject(project.getId());
+            await deleteProjectInDb(project.getId());
             await ctx.reply(`Project deleted.`);
             return ctx.scene.enter('mainMenu');
         } else if (text === 'No') {

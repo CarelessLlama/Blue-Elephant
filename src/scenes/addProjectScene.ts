@@ -2,7 +2,7 @@ import createDebug from 'debug';
 import { Scenes } from 'telegraf';
 
 import { Project } from '../models/Project';
-import { createProject } from '../db/functions';
+import { createProjectInDb } from '../db/functions';
 import { BotContext } from '../BotContext';
 import {
     getProject,
@@ -61,7 +61,7 @@ const askForProjectMembers = async (ctx: BotContext) => {
         const personArr = parsePeopleListString(text);
         const project = getProject(ctx);
         project.setPersons(personArr);
-        createProject(project);
+        createProjectInDb(project);
         await ctx.reply(`Project members saved. Exiting scene now.`);
         return ctx.scene.enter('mainMenu', ctx.scene.session);
     } catch (error) {

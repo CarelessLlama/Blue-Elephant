@@ -4,7 +4,7 @@ import { Scenes } from 'telegraf';
 
 import { InvalidTextError } from '../../exceptions';
 
-import { updateProject } from '../../db/functions';
+import { updateProjectInDb } from '../../db/functions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
 import { isBackCommand, parsePeopleListString } from '../../util/userInput';
@@ -37,7 +37,7 @@ const askForProjectMembers = async (ctx: BotContext) => {
         const project = getProject(ctx);
         debug(`Removing ${personArr.length} project members: ${personArr}`);
         project.removePersons(personArr);
-        updateProject(project);
+        updateProjectInDb(project);
         await ctx.reply(`Project members removed. Exiting scene now.`);
         return ctx.scene.enter('manageProject', ctx.scene.session);
     } catch (error) {

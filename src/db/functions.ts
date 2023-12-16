@@ -34,7 +34,7 @@ export async function connectToDatabase() {
  *
  * @param proj - project to save to database
  */
-export async function updateProject(proj: Project) {
+export async function updateProjectInDb(proj: Project) {
     if (!proj.presentInDatabase()) {
         throw new Error('Project not present in database');
     }
@@ -57,7 +57,7 @@ export async function updateProject(proj: Project) {
  * @param projectId - id of the project to retrieve
  * @returns Project object
  */
-export async function loadProject(projectId: string): Promise<Project> {
+export async function loadProjectFromDb(projectId: string): Promise<Project> {
     const id = makeObjectId(projectId);
     const project = await DbProject.findById(id).exec();
     if (project == null) {
@@ -81,7 +81,7 @@ export async function loadProject(projectId: string): Promise<Project> {
  * @param project - project to be created
  * @returns Project id as a string
  */
-export async function createProject(project: Project): Promise<string> {
+export async function createProjectInDb(project: Project): Promise<string> {
     const dbProject = await DbProject.create({
         userId: project.getUserId(),
         name: project.getName(),
@@ -98,7 +98,7 @@ export async function createProject(project: Project): Promise<string> {
  * @param userId - Queries the database using this id
  * @returns Map containing project name - project id pairs.
  */
-export async function getProjects(
+export async function getProjectsFromDb(
     userId: number,
 ): Promise<Map<string, number>> {
     Project.validateUserId(userId);
@@ -115,7 +115,7 @@ export async function getProjects(
  *
  * @param projectId - id of the project to be deleted
  */
-export async function deleteProject(projectId: string) {
+export async function deleteProjectInDb(projectId: string) {
     const id = makeObjectId(projectId);
     await DbProject.deleteOne({ _id: id }).exec();
 }

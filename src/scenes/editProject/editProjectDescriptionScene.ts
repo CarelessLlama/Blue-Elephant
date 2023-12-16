@@ -4,9 +4,11 @@ import { Scenes } from 'telegraf';
 
 import { UnknownError, InvalidInputTypeError } from '../../exceptions';
 
-import { updateProject } from '../../db/functions';
+import { updateProjectInDb } from '../../db/functions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
+import { getProject, getResponse, handleError } from '../../util/botContext';
+import { isBackCommand } from '../../util/userInput';
 
 const debug = createDebug('bot:edit_project_description_command');
 
@@ -21,31 +23,18 @@ const editProjectDescription = async (ctx: BotContext) => {
 
 const handleEditProjectDescription = async (ctx: BotContext) => {
     try {
-        if (!ctx.message || !ctx.from) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-
-        if (ctx.message?.text === 'Back') {
+        const text = getResponse(ctx);
+        if (isBackCommand(text)) {
             debug('User selected "Back"');
             return ctx.scene.enter('editProject', ctx.scene.session);
         }
-
-        ctx.scene.session.project.setDescription(ctx.message.text);
-        updateProject(ctx.scene.session.project);
+        const project = getProject(ctx);
+        project.setDescription(text);
+        updateProjectInDb(project);
         await ctx.reply(`Project description updated.`);
         return ctx.scene.enter('editProject', ctx.scene.session);
     } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
+        handleError(ctx, error as Error, debug);
         return ctx.scene.reenter();
     }
 };

@@ -4,7 +4,7 @@ import { Scenes, Markup } from 'telegraf';
 
 import { UnknownError, InvalidInputTypeError } from '../exceptions';
 
-import { getProjects, loadProject } from '../db/functions';
+import { getProjectsFromDb, loadProjectFromDb } from '../db/functions';
 
 import { BotContext } from '../BotContext';
 
@@ -18,7 +18,7 @@ const viewExistingProjectNames = async (ctx: BotContext) => {
             );
         }
         debug(`Entering viewExistingProjects scene.`);
-        const userProjectMap = await getProjects(ctx.from.id);
+        const userProjectMap = await getProjectsFromDb(ctx.from.id);
         ctx.scene.session.projectMap = userProjectMap;
         const userProjectList = [...userProjectMap.keys()].map((proj) =>
             proj.toString(),
@@ -57,7 +57,7 @@ const handleExistingProjects = async (ctx: BotContext) => {
         if (userProjectList.includes(text)) {
             debug(`User selected to view ${text}`);
             const projId = ctx.scene.session.projectMap.get(text);
-            const proj = await loadProject(new String(projId).toString());
+            const proj = await loadProjectFromDb(new String(projId).toString());
             ctx.scene.session.project = proj;
             await ctx.reply(
                 `Loading existing project.`,

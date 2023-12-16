@@ -8,7 +8,7 @@ import { InvalidInputTypeError } from '../exceptions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 
-import { updateProject } from '../db/functions';
+import { updateProjectInDb } from '../db/functions';
 import { getProject, getResponse, handleError } from '../util/botContext';
 
 const debug = createDebug('bot:generate_groupings_command');
@@ -39,7 +39,7 @@ const handleNumGroups = async (ctx: BotContext) => {
     const groupings = logic.prettyPrintGroupings();
     logic.updateInteractionsBasedOnGeneratedGroupings();
 
-    updateProject(project);
+    updateProjectInDb(project);
     const out = `Here are the groupings:\n${groupings}.
     Do not delete this message as you will need it to view the groupings again.`;
     await ctx.reply(out);
