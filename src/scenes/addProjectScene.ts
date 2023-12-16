@@ -1,5 +1,4 @@
 import createDebug from 'debug';
-import { Scenes } from 'telegraf';
 
 import { Project } from '../models/Project';
 import { createProjectInDb } from '../db/functions';
@@ -8,10 +7,10 @@ import {
     getProject,
     getResponse,
     getUserId,
-    handleError,
     storeProjectInSession,
 } from '../util/botContext';
 import { parsePeopleListString } from '../util/userInput';
+import { makeSceneWithErrorHandling } from '../util/scene';
 
 const debug = createDebug('bot:add_project_command');
 
@@ -28,51 +27,37 @@ const askForProjectName = async (ctx: BotContext) => {
 };
 
 const handleProjectName = async (ctx: BotContext) => {
-    try {
-        const userId = getUserId(ctx);
-        const text = getResponse(ctx);
-        storeProjectInSession(ctx, Project.createBlankProject(text, userId));
-        await ctx.reply(`Please enter a short description for your project.`);
-        return ctx.wizard.next();
-    } catch (error) {
-        handleError(ctx, error as Error, debug);
-        return ctx.scene.reenter();
-    }
+    const userId = getUserId(ctx);
+    const text = getResponse(ctx);
+    storeProjectInSession(ctx, Project.createBlankProject(text, userId));
+    await ctx.reply(`Please enter a short description for your project.`);
+    return ctx.wizard.next();
 };
 
 const askForProjectDescription = async (ctx: BotContext) => {
-    try {
-        const text = getResponse(ctx);
-        debug(`Project description: ${text}`);
-        getProject(ctx).setDescription(text);
-        await ctx.reply(
-            `Please enter the project members' names, delimited by commas.`,
-        );
-        return ctx.wizard.next();
-    } catch (error) {
-        handleError(ctx, error as Error, debug);
-        return ctx.scene.reenter();
-    }
+    const text = getResponse(ctx);
+    debug(`Project description: ${text}`);
+    getProject(ctx).setDescription(text);
+    await ctx.reply(
+        `Please enter the project members' names, delimited by commas.`,
+    );
+    return ctx.wizard.next();
 };
 
 const askForProjectMembers = async (ctx: BotContext) => {
-    try {
-        const text = getResponse(ctx);
-        debug(`Project members' inputs: ${text}`);
-        const personArr = parsePeopleListString(text);
-        const project = getProject(ctx);
-        project.setPersons(personArr);
-        createProjectInDb(project);
-        await ctx.reply(`Project members saved. Exiting scene now.`);
-        return ctx.scene.enter('mainMenu', ctx.scene.session);
-    } catch (error) {
-        handleError(ctx, error as Error, debug);
-        return ctx.scene.reenter();
-    }
+    const text = getResponse(ctx);
+    debug(`Project members' inputs: ${text}`);
+    const personArr = parsePeopleListString(text);
+    const project = getProject(ctx);
+    project.setPersons(personArr);
+    createProjectInDb(project);
+    await ctx.reply(`Project members saved. Exiting scene now.`);
+    return ctx.scene.enter('mainMenu', ctx.scene.session);
 };
 
-const addProjectScene = new Scenes.WizardScene<BotContext>(
+const addProjectScene = makeSceneWithErrorHandling(
     'addProject',
+    debug,
     askForProjectName,
     handleProjectName,
     askForProjectDescription,

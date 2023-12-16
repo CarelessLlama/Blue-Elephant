@@ -1,13 +1,10 @@
 import createDebug from 'debug';
 
-import { Scenes } from 'telegraf';
-
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
 import { updateProjectInDb } from '../../db/functions';
-import { getProject, getResponse, handleError } from '../../util/botContext';
+import { getProject, getResponse } from '../../util/botContext';
 import { isBackCommand } from '../../util/userInput';
-
-const debug = createDebug('bot:edit_project_name_command');
+import { makeSceneWithErrorHandling } from '../../util/scene';
 
 const editProjectName = async (ctx: BotContext) => {
     debug('Entered editProjectName scene.');
@@ -19,26 +16,23 @@ const editProjectName = async (ctx: BotContext) => {
 };
 
 const handleEditProjectName = async (ctx: BotContext) => {
-    try {
-        const text = getResponse(ctx);
-
-        if (isBackCommand(text)) {
-            debug('User selected "Back"');
-            return ctx.scene.enter('editProject', ctx.scene.session);
-        }
-        const project = getProject(ctx);
-        project.setName(text);
-        updateProjectInDb(project);
-        await ctx.reply(`Project name updated.`);
+    const text = getResponse(ctx);
+    if (isBackCommand(text)) {
+        debug('User selected "Back"');
         return ctx.scene.enter('editProject', ctx.scene.session);
-    } catch (error) {
-        handleError(ctx, error as Error, debug);
-        return ctx.scene.reenter();
     }
+    const project = getProject(ctx);
+    project.setName(text);
+    updateProjectInDb(project);
+    await ctx.reply(`Project name updated.`);
+    return ctx.scene.enter('editProject', ctx.scene.session);
 };
 
-const editProjectNameScene = new Scenes.WizardScene(
+const debug = createDebug('bot:edit_project_name_command');
+
+const editProjectNameScene = makeSceneWithErrorHandling(
     'editProjectName',
+    debug,
     editProjectName,
     handleEditProjectName,
 );

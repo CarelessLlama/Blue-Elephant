@@ -1,10 +1,11 @@
 import createDebug from 'debug';
 
-import { Scenes, Markup } from 'telegraf';
-
-import { UnknownError, InvalidInputTypeError } from '../../exceptions';
+import { Markup } from 'telegraf';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
+import { makeSceneWithErrorHandling } from '../../util/scene';
+import { getResponse } from '../../util/botContext';
+import { isBackCommand } from '../../util/userInput';
 
 const debug = createDebug('bot:edit_project_command');
 
@@ -28,49 +29,40 @@ const editProject = async (ctx: BotContext) => {
 };
 
 const handleEditProjectOption = async (ctx: BotContext) => {
-    try {
-        if (!ctx.message || !ctx.from) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        if (ctx.message?.text === 'Add People') {
+    const text = getResponse(ctx);
+    if (isBackCommand(text)) {
+        debug('User selected "Back"');
+        return ctx.scene.enter('manageProject', ctx.scene.session);
+    }
+    switch (text) {
+        case 'Add People': {
             debug('User selected "Add People"');
             return ctx.scene.enter('addPeople', ctx.scene.session);
-        } else if (ctx.message?.text === 'Delete People') {
+        }
+        case 'Delete People': {
             debug('User selected "Delete People"');
             return ctx.scene.enter('deletePeople', ctx.scene.session);
-        } else if (ctx.message?.text === 'Edit Project Name') {
+        }
+        case 'Edit Project Name': {
             debug('User selected "Edit Project Name"');
             return ctx.scene.enter('editProjectName', ctx.scene.session);
-        } else if (ctx.message?.text === 'Edit Project Description') {
+        }
+        case 'Edit Project Description': {
             debug('User selected "Edit Project Description"');
             return ctx.scene.enter('editProjectDescription', ctx.scene.session);
-        } else if (ctx.message?.text === 'Back') {
-            debug('User selected "Back"');
-            return ctx.scene.enter('manageProject', ctx.scene.session);
-        } else {
+        }
+        default: {
             await ctx.reply(
                 'Invalid option. Please select a valid option from the keyboard.',
             );
             return ctx.wizard.back();
         }
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
     }
 };
 
-const editProjectScene = new Scenes.WizardScene<BotContext>(
+const editProjectScene = makeSceneWithErrorHandling(
     'editProject',
+    debug,
     editProject,
     handleEditProjectOption,
 );

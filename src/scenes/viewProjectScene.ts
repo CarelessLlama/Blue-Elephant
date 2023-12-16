@@ -1,9 +1,8 @@
 import createDebug from 'debug';
 
-import { Scenes } from 'telegraf';
-
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 import { getProject } from '../util/botContext';
+import { makeSceneWithErrorHandling } from '../util/scene';
 
 const debug = createDebug('bot:view_project_details_command');
 
@@ -19,8 +18,9 @@ const viewProject = async (ctx: BotContext) => {
     return ctx.scene.enter('manageProject', ctx.scene.session);
 };
 
-const viewProjectScene = new Scenes.WizardScene<BotContext>(
+const viewProjectScene = makeSceneWithErrorHandling(
     'viewProject',
+    debug,
     viewProject,
 );
 

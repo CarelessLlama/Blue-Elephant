@@ -1,14 +1,11 @@
 import createDebug from 'debug';
 
-import { Scenes } from 'telegraf';
-
-import { InvalidTextError } from '../../exceptions';
-
 import { updateProjectInDb } from '../../db/functions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
 import { isBackCommand, parsePeopleListString } from '../../util/userInput';
-import { getProject, getResponse, handleError } from '../../util/botContext';
+import { getProject, getResponse } from '../../util/botContext';
+import { makeSceneWithErrorHandling } from '../../util/scene';
 
 const debug = createDebug('bot:edit_project_description_command');
 
@@ -22,32 +19,23 @@ const deletePeople = async (ctx: BotContext) => {
 };
 
 const askForProjectMembers = async (ctx: BotContext) => {
-    try {
-        const text = getResponse(
-            ctx,
-            new InvalidTextError(
-                'Please enter a valid string representing group members, delimited by commas.',
-            ),
-        );
-        if (isBackCommand(text)) {
-            debug('User indicated to go back');
-            return ctx.scene.enter('manageProject', ctx.scene.session);
-        }
-        const personArr = parsePeopleListString(text);
-        const project = getProject(ctx);
-        debug(`Removing ${personArr.length} project members: ${personArr}`);
-        project.removePersons(personArr);
-        updateProjectInDb(project);
-        await ctx.reply(`Project members removed. Exiting scene now.`);
+    const text = getResponse(ctx);
+    if (isBackCommand(text)) {
+        debug('User indicated to go back');
         return ctx.scene.enter('manageProject', ctx.scene.session);
-    } catch (error) {
-        await handleError(ctx, error as Error, debug);
-        return ctx.scene.reenter();
     }
+    const personArr = parsePeopleListString(text);
+    const project = getProject(ctx);
+    debug(`Removing ${personArr.length} project members: ${personArr}`);
+    project.removePersons(personArr);
+    updateProjectInDb(project);
+    await ctx.reply(`Project members removed. Exiting scene now.`);
+    return ctx.scene.enter('manageProject', ctx.scene.session);
 };
 
-const deletePeopleScene = new Scenes.WizardScene(
+const deletePeopleScene = makeSceneWithErrorHandling(
     'deletePeople',
+    debug,
     deletePeople,
     askForProjectMembers,
 );

@@ -1,16 +1,14 @@
 import createDebug from 'debug';
 
-import { Scenes, Markup } from 'telegraf';
+import { Markup } from 'telegraf';
 
 import { deleteProjectInDb } from '../db/functions';
 
-import {
-    UnknownError,
-    InvalidTextError,
-    InvalidInputTypeError,
-} from '../exceptions';
+import { InvalidTextError } from '../exceptions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
+import { makeSceneWithErrorHandling } from '../util/scene';
+import { getProject, getResponse } from '../util/botContext';
 
 const debug = createDebug('bot:delete_project_command');
 /**
@@ -28,45 +26,25 @@ const askForDeleteConfirmation = async (ctx: BotContext) => {
 };
 
 const handleDeleteProject = async (ctx: BotContext) => {
-    try {
-        if (!ctx.message || !ctx.from) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-
-        const text = ctx.message.text;
-        if (text === 'Yes') {
-            debug(`User selected to delete the project.`);
-            const project = ctx.scene.session.project;
-            await deleteProjectInDb(project.getId());
-            await ctx.reply(`Project deleted.`);
-            return ctx.scene.enter('mainMenu');
-        } else if (text === 'No') {
-            debug(`User selected not to delete the project.`);
-            await ctx.reply(`Project not deleted. Returning to the main menu.`);
-            return ctx.scene.enter('mainMenu');
-        } else {
-            throw new InvalidTextError(
-                'Please enter a valid option. Please select either Yes or No.',
-            );
-        }
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
+    const text = getResponse(ctx);
+    if (text === 'Yes') {
+        debug(`User selected to delete the project.`);
+        const project = getProject(ctx);
+        await deleteProjectInDb(project.getId());
+        await ctx.reply(`Project deleted.`);
+        return ctx.scene.enter('mainMenu');
+    } else if (text === 'No') {
+        debug(`User selected not to delete the project.`);
+        await ctx.reply(`Project not deleted. Returning to the main menu.`);
+        return ctx.scene.enter('mainMenu');
+    } else {
+        throw new InvalidTextError('Please select either Yes or No.');
     }
 };
 
-const deleteProjectScene = new Scenes.WizardScene<BotContext>(
+const deleteProjectScene = makeSceneWithErrorHandling(
     'deleteProject',
+    debug,
     askForDeleteConfirmation,
     handleDeleteProject,
 );

@@ -1,31 +1,23 @@
 import createDebug from 'debug';
-
-import { Scenes, Markup } from 'telegraf';
+import { Markup } from 'telegraf';
 
 import { AlgorithmRunner } from '../models/AlgorithmRunner';
-
 import { InvalidInputTypeError } from '../exceptions';
-
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
-
 import { updateProjectInDb } from '../db/functions';
-import { getProject, getResponse, handleError } from '../util/botContext';
+import { getProject, getResponse } from '../util/botContext';
+import { makeSceneWithErrorHandling } from '../util/scene';
 
 const debug = createDebug('bot:generate_groupings_command');
 
 const getNumGroups = async (ctx: BotContext) => {
-    try {
-        debug(`Entering getNumGroups scene.`);
-        updateSessionDataBetweenScenes(ctx);
-        await ctx.reply(
-            `How many groups do you want to generate?`,
-            Markup.removeKeyboard(),
-        );
-        return ctx.wizard.next();
-    } catch (error) {
-        handleError(ctx, error as Error, debug);
-        return ctx.scene.reenter();
-    }
+    debug(`Entering getNumGroups scene.`);
+    updateSessionDataBetweenScenes(ctx);
+    await ctx.reply(
+        `How many groups do you want to generate?`,
+        Markup.removeKeyboard(),
+    );
+    return ctx.wizard.next();
 };
 
 const handleNumGroups = async (ctx: BotContext) => {
@@ -46,8 +38,9 @@ const handleNumGroups = async (ctx: BotContext) => {
     return ctx.scene.enter('mainMenu');
 };
 
-const generateGroupingsScene = new Scenes.WizardScene(
+const generateGroupingsScene = makeSceneWithErrorHandling(
     'generateGroupings',
+    debug,
     getNumGroups,
     handleNumGroups,
 );

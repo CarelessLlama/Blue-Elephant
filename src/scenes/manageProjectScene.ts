@@ -1,83 +1,68 @@
 import createDebug from 'debug';
+import { Markup } from 'telegraf';
 
-import { Scenes, Markup } from 'telegraf';
-
-import { UnknownError, InvalidInputTypeError } from '../exceptions';
-
+import { InvalidTextError } from '../exceptions';
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
+import { makeSceneWithErrorHandling } from '../util/scene';
+import { getResponse } from '../util/botContext';
+import { isBackCommand } from '../util/userInput';
 
 const debug = createDebug('bot:generate_existing_projects_command');
 
 const manageProject = async (ctx: BotContext) => {
-    try {
-        debug(`Entering manageProject scene.`);
-        updateSessionDataBetweenScenes(ctx);
-        await ctx.reply(
-            `Project retrieved. What do you want to do?`,
-            Markup.keyboard([
-                [
-                    'View Project Details',
-                    'Generate Groupings',
-                    'Reset Interactions',
-                ],
-                ['Edit Project', 'Delete Project', 'Back'],
-            ]).resize(),
-        );
-        return ctx.wizard.next();
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
-    }
+    debug(`Entering manageProject scene.`);
+    updateSessionDataBetweenScenes(ctx);
+    await ctx.reply(
+        `Project retrieved. What do you want to do?`,
+        Markup.keyboard([
+            [
+                'View Project Details',
+                'Generate Groupings',
+                'Reset Interactions',
+            ],
+            ['Edit Project', 'Delete Project', 'Back'],
+        ]).resize(),
+    );
+    return ctx.wizard.next();
 };
 
 const handleManageProjectOption = async (ctx: BotContext) => {
-    try {
-        if (!ctx.message || !ctx.from) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        if (ctx.message?.text === 'View Project Details') {
+    const text = getResponse(ctx);
+    if (isBackCommand(text)) {
+        debug('User selected "Back"');
+        return ctx.scene.enter('existingProjects', ctx.scene.session);
+    }
+    switch (text) {
+        case 'View Project Details': {
             return ctx.scene.enter('viewProject', ctx.scene.session);
-        } else if (ctx.message?.text === 'Generate Groupings') {
+        }
+        case 'Generate Groupings': {
             debug('User selected "Generate Groupings"');
             return ctx.scene.enter('generateGroupings', ctx.scene.session);
-        } else if (ctx.message?.text === 'Reset Interactions') {
+        }
+        case 'Reset Interactions': {
             debug('User selected "Reset Interactions"');
             return ctx.scene.enter('resetInteractions', ctx.scene.session);
-        } else if (ctx.message?.text === 'Edit Project') {
+        }
+        case 'Edit Project': {
             debug('User selected "Edit Project"');
             return ctx.scene.enter('editProject', ctx.scene.session);
-        } else if (ctx.message?.text === 'Delete Project') {
+        }
+        case 'Delete Project': {
             debug('User selected "Delete Project"');
             return ctx.scene.enter('deleteProject', ctx.scene.session);
-        } else if (ctx.message?.text === 'Back') {
-            debug('User selected "Back"');
-            return ctx.scene.enter('existingProjects', ctx.scene.session);
-        } else {
-            await ctx.reply(
+        }
+        default: {
+            throw new InvalidTextError(
                 'Invalid option. Please select a valid option from the keyboard.',
             );
-            return ctx.wizard.back();
         }
-    } catch (error) {
-        const errorMessage = (error as Error).message;
-        debug(errorMessage);
-        await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
     }
 };
 
-const manageProjectScene = new Scenes.WizardScene<BotContext>(
+const manageProjectScene = makeSceneWithErrorHandling(
     'manageProject',
+    debug,
     manageProject,
     handleManageProjectOption,
 );
