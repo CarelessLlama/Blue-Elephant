@@ -15,8 +15,8 @@ function makeSceneWithErrorHandling(
             try {
                 return await step(ctx, next);
             } catch (error) {
-                handleError(ctx, error as Error, debug);
-                return ctx.scene.reenter();
+                await handleError(ctx, error as Error, debug);
+                return ctx.wizard.selectStep(ctx.wizard.cursor);
             }
         };
     }
