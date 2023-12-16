@@ -4,19 +4,16 @@ import { InvalidInputTypeError, UnknownError } from '../exceptions';
 import { Project } from '../models/Project';
 
 // utility functions for retrieving data from BotContext
-function getResponse(ctx: BotContext, err: Error): string {
+function getResponse(ctx: BotContext): string {
     if (!ctx.message) {
         throw new UnknownError(
-            'An unknown error occurred. Please try again later.',
+            'Message could not be found. This should not be happening.',
         );
     }
     if (!('text' in ctx.message)) {
         throw new InvalidInputTypeError(
             'Invalid input type. Please enter a text message.',
         );
-    }
-    if (!ctx.message.text) {
-        throw err;
     }
     return ctx.message.text;
 }
@@ -29,6 +26,15 @@ function getProject(ctx: BotContext): Project {
     return ctx.scene.session.project;
 }
 
+function getUserId(ctx: BotContext): number {
+    if (!ctx.from) {
+        throw new UnknownError(
+            'User id could not be found. This should not be happening.',
+        );
+    }
+    return ctx.from.id;
+}
+
 async function handleError(
     ctx: BotContext,
     error: Error,
@@ -39,4 +45,4 @@ async function handleError(
     await ctx.reply(errorMessage);
 }
 
-export { getResponse, getProject, handleError };
+export { getResponse, getUserId, getProject, handleError };

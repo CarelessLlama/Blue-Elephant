@@ -2,9 +2,14 @@ import createDebug from 'debug';
 
 import { Scenes, Markup } from 'telegraf';
 
-import { UnknownError, InvalidInputTypeError } from '../exceptions';
+import {
+    UnknownError,
+    InvalidInputTypeError,
+    InvalidTextError,
+} from '../exceptions';
 
 import { BotContext } from '../BotContext';
+import { getResponse } from '../util/botContext';
 
 const debug = createDebug('bot:generate_existing_projects_command');
 
@@ -21,27 +26,12 @@ const askForMainMenuOption = async (ctx: BotContext) => {
 
 const handleMainMenuOption = async (ctx: BotContext) => {
     try {
-        if (!ctx.message) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        // const text = ctx.message.text;
-        if (ctx.message?.text === 'Create New Project') {
+        const text = getResponse(ctx);
+        if (text === 'Create New Project') {
             debug('User selected "Create New Project"');
-            // Handle 'Create New Project' option
-            // ...
             return ctx.scene.enter('addProject', Markup.removeKeyboard());
-        } else if (ctx.message?.text === 'View Existing Project(s)') {
+        } else if (text === 'View Existing Project(s)') {
             debug('User selected "View Existing Project(s)"');
-            // Handle 'View Existing Project(s)' option
-            // ...
             return ctx.scene.enter('existingProjects', Markup.removeKeyboard());
         } else {
             await ctx.reply(
