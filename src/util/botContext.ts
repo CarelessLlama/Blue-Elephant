@@ -45,4 +45,14 @@ async function handleError(
     await ctx.reply(errorMessage);
 }
 
-export { getResponse, getUserId, getProject, handleError };
+function storeProjectInSession(ctx: BotContext, project: Project): void {
+    ctx.scene.session.project = project;
+}
+
+export {
+    getResponse,
+    getUserId,
+    getProject,
+    handleError,
+    storeProjectInSession,
+};

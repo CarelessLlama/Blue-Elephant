@@ -9,6 +9,7 @@ import {
     getResponse,
     getUserId,
     handleError,
+    storeProjectInSession,
 } from '../util/botContext';
 import { parsePeopleListString } from '../util/userInput';
 
@@ -30,7 +31,7 @@ const handleProjectName = async (ctx: BotContext) => {
     try {
         const userId = getUserId(ctx);
         const text = getResponse(ctx);
-        storeInSession(ctx, Project.createBlankProject(text, userId));
+        storeProjectInSession(ctx, Project.createBlankProject(text, userId));
         await ctx.reply(`Please enter a short description for your project.`);
         return ctx.wizard.next();
     } catch (error) {
@@ -79,7 +80,3 @@ const addProjectScene = new Scenes.WizardScene<BotContext>(
 );
 
 export { addProjectScene };
-
-function storeInSession(ctx: BotContext, project: Project): void {
-    ctx.scene.session.project = project;
-}

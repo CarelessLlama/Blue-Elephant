@@ -100,7 +100,7 @@ export async function createProjectInDb(project: Project): Promise<string> {
  */
 export async function getProjectsFromDb(
     userId: number,
-): Promise<Map<string, number>> {
+): Promise<Map<string, string>> {
     Project.validateUserId(userId);
     const projects = await DbProject.find({ userId: userId }).exec();
     const map = new Map();
