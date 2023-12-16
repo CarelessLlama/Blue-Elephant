@@ -7,7 +7,7 @@ import { InvalidTextError } from '../../exceptions';
 import { updateProject } from '../../db/functions';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
-import { parsePeopleListString } from '../../util/userInput';
+import { isBackCommand, parsePeopleListString } from '../../util/userInput';
 import { getResponse, getProject, handleError } from '../../util/botContext';
 
 const debug = createDebug('bot:edit_project_description_command');
@@ -29,8 +29,8 @@ const askForProjectMembers = async (ctx: BotContext) => {
                 'Please enter a valid string representing group members, delimited by commas.',
             ),
         );
-        if (text === 'Back') {
-            debug('User selected "Back"');
+        if (isBackCommand(text)) {
+            debug('User indicated to go back');
             return ctx.scene.enter('manageProject', ctx.scene.session);
         }
         const personArr = parsePeopleListString(text);

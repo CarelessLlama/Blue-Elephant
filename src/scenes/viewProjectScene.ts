@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { Scenes } from 'telegraf';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
+import { getProject } from '../util/botContext';
 
 const debug = createDebug('bot:view_project_details_command');
 
@@ -13,11 +14,8 @@ const debug = createDebug('bot:view_project_details_command');
 const viewProject = async (ctx: BotContext) => {
     updateSessionDataBetweenScenes(ctx);
     debug(`Entering viewProject scene.`);
-    let out = `Project Details are as follows:\n`;
-    out += `Project Name: ${ctx.scene.session.project.getName()}\n`;
-    out += `Project Description: ${ctx.scene.session.project.getDescription()}\n`;
-    out += `Project Members: ${ctx.scene.session.project.getPersons()}\n`;
-    await ctx.reply(out);
+    const project = getProject(ctx);
+    await ctx.reply(project.toString());
     return ctx.scene.enter('manageProject', ctx.scene.session);
 };
 

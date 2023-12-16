@@ -234,4 +234,11 @@ export class Project {
             .fill(null)
             .map(() => Array(n).fill(0));
     }
+
+    public toString(): string {
+        let out = `Project Name: ${this.name}\n`;
+        out += `Project Description: ${this.description}\n`;
+        out += `Project Members: ${this.personArr}\n`;
+        return out;
+    }
 }
