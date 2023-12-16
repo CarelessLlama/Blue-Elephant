@@ -161,6 +161,9 @@ export class Project {
         }
     }
     public static isValidUserId(userid: number): boolean {
+        if (isNaN(userid)) {
+            return false;
+        }
         return userid >= 0;
     }
     public static validateUserId(userid: number): void {
@@ -216,6 +219,13 @@ export class Project {
                         'matrix must be equal to the number of people in the project.',
                 );
             }
+            row.forEach((num) => {
+                if (isNaN(num)) {
+                    throw new Error(
+                        'Invalid adjacency matrix. The adjacency matrix must only contain numbers.',
+                    );
+                }
+            });
         });
     }
 
