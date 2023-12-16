@@ -7,21 +7,16 @@ import { Scenes } from 'telegraf';
 import { createProject } from '../db/functions';
 
 import {
-    UnknownError,
-    InvalidTextError,
-    InvalidInputTypeError,
-} from '../exceptions';
+    validateProjectDescription,
+    validateProjectName,
+    getProjectMembersFromString,
+} from '../util/userInput';
+
+import { getTextFromTextMessages } from '../util/userInput';
 
 import { BotContext } from '../BotContext';
 
 const debug = createDebug('bot:add_project_command');
-
-/**
- * Creates a new project in the database.
- * @returns A scene with middleware functions that handles the creation of a project.
- */
-const invalidTextName = (text: string) =>
-    text.length < 3 || text.startsWith('/');
 
 const askForProjectName = async (ctx: BotContext) => {
     debug(`Entering addProject scene.`);
@@ -32,30 +27,14 @@ const askForProjectName = async (ctx: BotContext) => {
 };
 
 const handleProjectName = async (ctx: BotContext) => {
+    debug(`Asking for project name.`);
     try {
-        if (!ctx.message || !ctx.from) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
+        const text = getTextFromTextMessages(ctx);
+        validateProjectName(text);
 
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-
-        const text = ctx.message.text;
-        if (!text || invalidTextName(text)) {
-            throw new InvalidTextError(
-                'Please enter a valid project name. A project name needs to be at least 3 characters long and cannot start with /.',
-            );
-        }
-
-        // Save the project name and ask for the next piece of information
         ctx.scene.session.project = Project.createBlankProject(
             text,
-            ctx.from.id,
+            ctx.from?.id as number,
         );
         await ctx.reply(
             `Project name saved. Please enter a short description for your project.`,
@@ -65,30 +44,15 @@ const handleProjectName = async (ctx: BotContext) => {
         const errorMessage = (error as Error).message;
         debug(errorMessage);
         await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
+        return ctx.wizard.selectStep(1);
     }
 };
 
 const askForProjectDescription = async (ctx: BotContext) => {
+    debug(`Asking for project description.`);
     try {
-        if (!ctx.message) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        const text = ctx.message.text;
-        if (!text) {
-            throw new InvalidTextError(
-                'Please enter a valid project description.',
-            );
-        }
-        // Save the project description and ask for the next piece of information
-        debug(`Valid project description: ${text}`);
+        const text = getTextFromTextMessages(ctx);
+        validateProjectDescription(text);
         ctx.scene.session.project.setDescription(text);
         await ctx.reply(
             `Project description saved. Please enter the project members' names, delimited by commas and no spaces.`,
@@ -98,32 +62,16 @@ const askForProjectDescription = async (ctx: BotContext) => {
         const errorMessage = (error as Error).message;
         debug(errorMessage);
         await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
+        return ctx.wizard.selectStep(2);
     }
 };
 
 const askForProjectMembers = async (ctx: BotContext) => {
+    debug("Asking for project members' names.");
     try {
-        if (!ctx.message) {
-            throw new UnknownError(
-                'An unknown error occurred. Please try again later.',
-            );
-        }
-        if (!('text' in ctx.message)) {
-            throw new InvalidInputTypeError(
-                'Invalid input type. Please enter a text message.',
-            );
-        }
-        const text = ctx.message.text;
-        if (!text) {
-            throw new InvalidTextError(
-                'Please enter a valid string representing group members, delimited by commas and no spaces.',
-            );
-        }
-        // Save the project description and ask for the next piece of information
-        debug(`Valid project members' inputs: ${text}`);
+        const text = getTextFromTextMessages(ctx);
         const project = ctx.scene.session.project;
-        const personArr = text.split(',');
+        const personArr = getProjectMembersFromString(text);
         project.setPersons(personArr);
         createProject(project);
         await ctx.reply(`Project members saved. Exiting scene now.`);
@@ -132,7 +80,7 @@ const askForProjectMembers = async (ctx: BotContext) => {
         const errorMessage = (error as Error).message;
         debug(errorMessage);
         await ctx.reply(errorMessage);
-        return ctx.scene.reenter();
+        return ctx.wizard.selectStep(3);
     }
 };
 
