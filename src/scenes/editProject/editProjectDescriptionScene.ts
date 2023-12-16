@@ -2,7 +2,7 @@ import createDebug from 'debug';
 
 import { updateProjectInDb } from '../../db/functions';
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
-import { getProject, getResponse, handleError } from '../../util/botContext';
+import { getProject, getResponse } from '../../util/botContext';
 import { isBackCommand } from '../../util/userInput';
 import { makeSceneWithErrorHandling } from '../../util/scene';
 
