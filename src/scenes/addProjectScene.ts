@@ -2,7 +2,11 @@ import createDebug from 'debug';
 
 import { Project } from '../models/Project';
 import { BotContext } from '../BotContext';
-import { getUserId, storeProjectInSession } from '../util/botContext';
+import {
+    getProject,
+    getUserId,
+    storeProjectInSession,
+} from '../util/botContext';
 import {
     askForProjectDescription,
     askForProjectMembers,
@@ -12,11 +16,12 @@ import {
     handleEditProjectDescriptionFactory,
     handleEditProjectNameFactory,
     makeSceneWithErrorHandling,
-    saveProject,
+    returnToPreviousMenuFactory,
 } from '../util/scene';
+import { createProjectInDb } from '../db/functions';
 
 const debug = createDebug('bot:add_project_command');
-const previousLocation = 'mainMenu';
+const previousMenu = 'mainMenu';
 
 /**
  * Creates a new project in the database.
@@ -33,18 +38,29 @@ const createNewProject = async (ctx: BotContext, next: () => Promise<void>) => {
     return goNextStep(ctx, next);
 };
 
+export const saveNewProject = async (
+    ctx: BotContext,
+    step: () => Promise<void>,
+) => {
+    const project = getProject(ctx);
+    createProjectInDb(project);
+    await ctx.reply(`Project saved.`);
+    return goNextStep(ctx, step);
+};
+
 const addProjectScene = makeSceneWithErrorHandling(
     'addProject',
     debug,
     addProject,
     createNewProject,
     askForProjectName,
-    handleEditProjectNameFactory(debug, previousLocation),
+    handleEditProjectNameFactory(previousMenu),
     askForProjectDescription,
-    handleEditProjectDescriptionFactory(debug, previousLocation),
+    handleEditProjectDescriptionFactory(debug, previousMenu),
     askForProjectMembers,
-    handleAddProjectMembersFactory(debug, previousLocation),
-    saveProject,
+    handleAddProjectMembersFactory(debug, previousMenu),
+    saveNewProject,
+    returnToPreviousMenuFactory(previousMenu),
 );
 
 export { addProjectScene };

@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
 import {
     askForProjectName,
+    goNextStep,
     handleEditProjectNameFactory,
     makeSceneWithErrorHandling,
     returnToPreviousMenuFactory,
@@ -12,10 +13,10 @@ import {
 const debug = createDebug('bot:edit_project_name_command');
 const previousMenu = 'editProject';
 
-const editProjectName = async (ctx: BotContext) => {
+const editProjectName = async (ctx: BotContext, next: () => Promise<void>) => {
     debug('Entered editProjectName scene.');
     updateSessionDataBetweenScenes(ctx);
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
 const editProjectNameScene = makeSceneWithErrorHandling(
@@ -23,7 +24,7 @@ const editProjectNameScene = makeSceneWithErrorHandling(
     debug,
     editProjectName,
     askForProjectName,
-    handleEditProjectNameFactory(debug, previousMenu),
+    handleEditProjectNameFactory(previousMenu),
     saveProject,
     returnToPreviousMenuFactory(previousMenu),
 );

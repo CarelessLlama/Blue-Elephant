@@ -8,6 +8,7 @@ import {
 import { getProject, getResponse } from '../../util/botContext';
 import {
     askForProjectMembers,
+    goNextStep,
     makeSceneWithErrorHandling,
     returnToPreviousMenuFactory,
     saveProject,
@@ -16,13 +17,16 @@ import {
 const debug = createDebug('bot:delete_people_command');
 const previousMenu = 'manageProject';
 
-const deletePeople = async (ctx: BotContext) => {
+const deletePeople = async (ctx: BotContext, next: () => Promise<void>) => {
     debug('Entered deletePeople scene.');
     updateSessionDataBetweenScenes(ctx);
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
-const handleDeleteProjectMembers = async (ctx: BotContext) => {
+const handleDeleteProjectMembers = async (
+    ctx: BotContext,
+    next: () => Promise<void>,
+) => {
     const text = getResponse(ctx);
     if (isBackCommand(text)) {
         debug('User indicated to go back');
@@ -32,7 +36,7 @@ const handleDeleteProjectMembers = async (ctx: BotContext) => {
     const project = getProject(ctx);
     debug(`Removing ${personArr.length} project members: ${personArr}`);
     project.removePersons(personArr);
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
 const deletePeopleScene = makeSceneWithErrorHandling(

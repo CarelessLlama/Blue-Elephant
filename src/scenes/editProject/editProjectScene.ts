@@ -1,70 +1,52 @@
 import createDebug from 'debug';
 
-import { Markup } from 'telegraf';
+import { MiddlewareFn } from 'telegraf';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
-import { makeSceneWithErrorHandling } from '../../util/scene';
-import { getResponse } from '../../util/botContext';
-import { isBackCommand } from '../../util/userInput';
+import {
+    askAndHandleMenuFactory,
+    goNextStep,
+    goToScene,
+    makeSceneWithErrorHandling,
+} from '../../util/scene';
 
 const debug = createDebug('bot:edit_project_command');
+const previousMenu = 'manageProject';
 
 /**
  * Edits an existing project in the database.
  * @returns A middleware function that handles the editing of a project.
  */
-const editProject = async (ctx: BotContext) => {
+const editProject = async (ctx: BotContext, next: () => Promise<void>) => {
     debug('Entered editProject scene.');
     updateSessionDataBetweenScenes(ctx);
-    // Add project edition logic here
-    await ctx.reply(
-        `What do you want to edit?`,
-        Markup.keyboard([
-            ['Add People', 'Delete People'],
-            ['Edit Project Name', 'Edit Project Description'],
-            ['Back'],
-        ]).resize(),
-    );
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
-const handleEditProjectOption = async (ctx: BotContext) => {
-    const text = getResponse(ctx);
-    if (isBackCommand(text)) {
-        debug('User selected "Back"');
-        return ctx.scene.enter('manageProject', ctx.scene.session);
-    }
-    switch (text) {
-        case 'Add People': {
-            debug('User selected "Add People"');
-            return ctx.scene.enter('addPeople', ctx.scene.session);
-        }
-        case 'Delete People': {
-            debug('User selected "Delete People"');
-            return ctx.scene.enter('deletePeople', ctx.scene.session);
-        }
-        case 'Edit Project Name': {
-            debug('User selected "Edit Project Name"');
-            return ctx.scene.enter('editProjectName', ctx.scene.session);
-        }
-        case 'Edit Project Description': {
-            debug('User selected "Edit Project Description"');
-            return ctx.scene.enter('editProjectDescription', ctx.scene.session);
-        }
-        default: {
-            await ctx.reply(
-                'Invalid option. Please select a valid option from the keyboard.',
-            );
-            return ctx.wizard.back();
-        }
-    }
-};
+const question = 'What do you want to edit?';
+const mapOptionToScene = new Map<string, MiddlewareFn<BotContext>>([
+    ['Add People', async (ctx) => goToScene('addPeople', ctx)],
+    ['Delete People', async (ctx) => goToScene('deletePeople', ctx)],
+    ['Edit Project Name', async (ctx) => goToScene('editProjectName', ctx)],
+    [
+        'Edit Project Description',
+        async (ctx) => goToScene('editProjectDescription', ctx),
+    ],
+]);
+
+const [askForMenuChoice, handleMenuChoice] = askAndHandleMenuFactory(
+    debug,
+    previousMenu,
+    question,
+    mapOptionToScene,
+);
 
 const editProjectScene = makeSceneWithErrorHandling(
     'editProject',
     debug,
     editProject,
-    handleEditProjectOption,
+    askForMenuChoice,
+    handleMenuChoice,
 );
 
 export { editProjectScene };

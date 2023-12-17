@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { BotContext, updateSessionDataBetweenScenes } from '../../BotContext';
 import {
     askForProjectDescription,
+    goNextStep,
     handleEditProjectDescriptionFactory,
     makeSceneWithErrorHandling,
     returnToPreviousMenuFactory,
@@ -12,10 +13,13 @@ import {
 const debug = createDebug('bot:edit_project_description_command');
 const previousMenu = 'editProject';
 
-const editProjectDescription = async (ctx: BotContext) => {
+const editProjectDescription = async (
+    ctx: BotContext,
+    next: () => Promise<void>,
+) => {
     debug('Entered editProjectDescription scene.');
     updateSessionDataBetweenScenes(ctx);
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
 const editProjectDescriptionScene = makeSceneWithErrorHandling(

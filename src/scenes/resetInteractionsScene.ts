@@ -1,46 +1,56 @@
 import createDebug from 'debug';
-import { Markup } from 'telegraf';
+import { Markup, MiddlewareFn } from 'telegraf';
 
-import { InvalidTextError } from '../exceptions';
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 import { updateProjectInDb } from '../db/functions';
-import { makeSceneWithErrorHandling } from '../util/scene';
-import { getProject, getResponse } from '../util/botContext';
+import {
+    askAndHandleMenuFactory,
+    goNextStep,
+    goToScene,
+    makeSceneWithErrorHandling,
+} from '../util/scene';
+import { getProject } from '../util/botContext';
 
 const debug = createDebug('bot:reset_interactions_command');
+const previousMenu = 'manageProject';
 
-const resetInteractions = async (ctx: BotContext) => {
+const resetInteractions = async (
+    ctx: BotContext,
+    next: () => Promise<void>,
+) => {
     debug(`Entering resetInteractions scene.`);
     updateSessionDataBetweenScenes(ctx);
-    await ctx.reply(
-        `Are you sure you want to reset the groupings?`,
-        Markup.keyboard([['Yes', 'No']]).resize(),
-    );
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
-const handleResetInteractions = async (ctx: BotContext) => {
-    debug('User entered reset interactions option.');
-    const text = getResponse(ctx);
+const question = `Are you sure you want to reset the groupings?`;
+const map = new Map<string, MiddlewareFn<BotContext>>([
+    [
+        'Yes',
+        async (ctx) => {
+            const project = getProject(ctx);
+            project.resetInteractions();
+            updateProjectInDb(project);
+            await ctx.reply('Interactions have been reset.');
+            return goToScene(previousMenu, ctx);
+        },
+    ],
+    ['No', async (ctx) => goToScene(previousMenu, ctx)],
+]);
 
-    if (text === 'Yes') {
-        const project = getProject(ctx);
-        project.resetInteractions();
-        updateProjectInDb(project);
-        await ctx.reply('Interactions have been reset.');
-    } else if (text === 'No') {
-        await ctx.reply('Interactions have not been reset.');
-    } else {
-        throw new InvalidTextError('Please select either Yes or No.');
-    }
-    return ctx.scene.enter('mainMenu');
-};
+const [askForMenuChoice, handleMenuChoice] = askAndHandleMenuFactory(
+    debug,
+    undefined,
+    question,
+    map,
+);
 
 const resetInteractionsScene = makeSceneWithErrorHandling(
     'resetInteractions',
     debug,
     resetInteractions,
-    handleResetInteractions,
+    askForMenuChoice,
+    handleMenuChoice,
 );
 
 export { resetInteractionsScene };

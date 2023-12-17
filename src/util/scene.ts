@@ -1,9 +1,10 @@
-import { MiddlewareFn, Scenes } from 'telegraf';
+import { Markup, MiddlewareFn, Scenes } from 'telegraf';
 import { BotContext } from '../BotContext';
 import { getProject, getResponse, handleError } from './botContext';
 import { Debugger } from 'debug';
 import { getProjectMembersFromString, isBackCommand } from './userInput';
 import { updateProjectInDb } from '../db/functions';
+import { InvalidTextError } from '../exceptions';
 
 export function makeSceneWithErrorHandling(
     id: string,
@@ -42,6 +43,10 @@ export const waitForUserResponse = async (ctx: BotContext) => {
     return ctx.wizard.next();
 };
 
+export const goToScene = (sceneId: string, ctx: BotContext) => {
+    return ctx.scene.enter(sceneId, ctx.scene.session);
+};
+
 // Scene factories
 export const askForProjectMembers = async (ctx: BotContext) => {
     await ctx.reply(
@@ -55,8 +60,7 @@ export const handleAddProjectMembersFactory =
     async (ctx: BotContext, next: () => Promise<void>) => {
         const text = getResponse(ctx);
         if (isBackCommand(text)) {
-            debug('User indicated to go back');
-            return ctx.scene.enter(backLocation, ctx.scene.session);
+            return goToScene(backLocation, ctx);
         }
         const personArr = getProjectMembersFromString(text);
         debug(`Project members' inputs: ${text}`);
@@ -73,12 +77,11 @@ export const askForProjectName = async (ctx: BotContext) => {
 };
 
 export const handleEditProjectNameFactory =
-    (debug: Debugger, backLocation: string) =>
+    (backLocation: string) =>
     async (ctx: BotContext, next: () => Promise<void>) => {
         const text = getResponse(ctx);
         if (isBackCommand(text)) {
-            debug('User selected "Back"');
-            return ctx.scene.enter(backLocation, ctx.scene.session);
+            return goToScene(backLocation, ctx);
         }
         const project = getProject(ctx);
         project.setName(text);
@@ -97,8 +100,7 @@ export const handleEditProjectDescriptionFactory =
     async (ctx: BotContext, step: () => Promise<void>) => {
         const text = getResponse(ctx);
         if (isBackCommand(text)) {
-            debug('User selected "Back"');
-            return ctx.scene.enter(backLocation, ctx.scene.session);
+            return goToScene(backLocation, ctx);
         }
         const project = getProject(ctx);
         project.setDescription(text);
@@ -117,5 +119,40 @@ export const saveProject = async (
 
 export const returnToPreviousMenuFactory =
     (backLocation: string) => async (ctx: BotContext) => {
-        return ctx.scene.enter(backLocation, ctx.scene.session);
+        return goToScene(backLocation, ctx);
     };
+
+export const askAndHandleMenuFactory = (
+    debug: Debugger,
+    previousMenu: string | undefined,
+    question: string,
+    map: Map<string, MiddlewareFn<BotContext>>,
+): [MiddlewareFn<BotContext>, MiddlewareFn<BotContext>] => {
+    const askSelectFromMenu = async (ctx: BotContext) => {
+        const choices = [...map.keys()];
+        if (previousMenu) {
+            choices.push('Back');
+        }
+        await ctx.reply(question, Markup.keyboard(choices).resize());
+        return waitForUserResponse(ctx);
+    };
+    const handleSelectFromMenu = async (
+        ctx: BotContext,
+        next: () => Promise<void>,
+    ) => {
+        const text = getResponse(ctx);
+        if (isBackCommand(text) && previousMenu) {
+            debug('User selected "Back"');
+            return goToScene(previousMenu, ctx);
+        }
+        const scene = map.get(text);
+        if (!scene) {
+            throw new InvalidTextError(
+                `Invalid option. Please select a valid option from the keyboard.`,
+            );
+        }
+        debug(`User selected "${text}"`);
+        return scene(ctx, next);
+    };
+    return [askSelectFromMenu, handleSelectFromMenu];
+};

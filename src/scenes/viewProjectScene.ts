@@ -2,7 +2,7 @@ import createDebug from 'debug';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 import { getProject } from '../util/botContext';
-import { makeSceneWithErrorHandling } from '../util/scene';
+import { goToScene, makeSceneWithErrorHandling } from '../util/scene';
 
 const debug = createDebug('bot:view_project_details_command');
 
@@ -15,7 +15,7 @@ const viewProject = async (ctx: BotContext) => {
     debug(`Entering viewProject scene.`);
     const project = getProject(ctx);
     await ctx.reply(project.toString());
-    return ctx.scene.enter('manageProject', ctx.scene.session);
+    return goToScene('manageProject', ctx);
 };
 
 const viewProjectScene = makeSceneWithErrorHandling(

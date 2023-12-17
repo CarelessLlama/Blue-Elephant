@@ -1,52 +1,58 @@
 import createDebug from 'debug';
 
-import { Markup } from 'telegraf';
+import { Markup, MiddlewareFn } from 'telegraf';
 
 import { deleteProjectInDb } from '../db/functions';
 
-import { InvalidTextError } from '../exceptions';
-
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
-import { makeSceneWithErrorHandling } from '../util/scene';
-import { getProject, getResponse } from '../util/botContext';
+import {
+    askAndHandleMenuFactory,
+    goNextStep,
+    makeSceneWithErrorHandling,
+    returnToPreviousMenuFactory,
+} from '../util/scene';
+import { getProject } from '../util/botContext';
 
 const debug = createDebug('bot:delete_project_command');
+const previousMenu = 'manageProject';
+
 /**
  * Deletes a project from the database.
  * @returns A middleware function that handles the deletion of a project.
  */
-const askForDeleteConfirmation = async (ctx: BotContext) => {
+const deleteProject = async (ctx: BotContext, next: () => Promise<void>) => {
     updateSessionDataBetweenScenes(ctx);
     debug(`Entering deleteProject scene.`);
-    await ctx.reply(
-        `You have selected to delete the project. Are you sure?`,
-        Markup.keyboard(['Yes', 'No']).resize(),
-    );
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
-const handleDeleteProject = async (ctx: BotContext) => {
-    const text = getResponse(ctx);
-    if (text === 'Yes') {
-        debug(`User selected to delete the project.`);
-        const project = getProject(ctx);
-        await deleteProjectInDb(project.getId());
-        await ctx.reply(`Project deleted.`);
-        return ctx.scene.enter('mainMenu');
-    } else if (text === 'No') {
-        debug(`User selected not to delete the project.`);
-        await ctx.reply(`Project not deleted. Returning to the main menu.`);
-        return ctx.scene.enter('mainMenu');
-    } else {
-        throw new InvalidTextError('Please select either Yes or No.');
-    }
-};
+const question = `Are you sure you want to delete the project?`;
+const map = new Map<string, MiddlewareFn<BotContext>>([
+    [
+        'Yes',
+        async (ctx) => {
+            const project = getProject(ctx);
+            await deleteProjectInDb(project.getId());
+            await ctx.reply(`Project deleted.`);
+            return ctx.scene.enter('mainMenu', Markup.removeKeyboard());
+        },
+    ],
+    ['No', returnToPreviousMenuFactory(previousMenu)],
+]);
+
+const [askForMenuChoice, handleMenuChoice] = askAndHandleMenuFactory(
+    debug,
+    undefined,
+    question,
+    map,
+);
 
 const deleteProjectScene = makeSceneWithErrorHandling(
     'deleteProject',
     debug,
-    askForDeleteConfirmation,
-    handleDeleteProject,
+    deleteProject,
+    askForMenuChoice,
+    handleMenuChoice,
 );
 
 export { deleteProjectScene };

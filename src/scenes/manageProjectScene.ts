@@ -1,68 +1,45 @@
 import createDebug from 'debug';
-import { Markup } from 'telegraf';
+import { MiddlewareFn } from 'telegraf';
 
-import { InvalidTextError } from '../exceptions';
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
-import { makeSceneWithErrorHandling } from '../util/scene';
-import { getResponse } from '../util/botContext';
-import { isBackCommand } from '../util/userInput';
+import {
+    askAndHandleMenuFactory,
+    goNextStep,
+    goToScene,
+    makeSceneWithErrorHandling,
+} from '../util/scene';
 
-const debug = createDebug('bot:generate_existing_projects_command');
+const debug = createDebug('bot:manage_projects_command');
+const previousMenu = 'existingProjects';
 
-const manageProject = async (ctx: BotContext) => {
+const manageProject = async (ctx: BotContext, next: () => Promise<void>) => {
     debug(`Entering manageProject scene.`);
     updateSessionDataBetweenScenes(ctx);
-    await ctx.reply(
-        `Project retrieved. What do you want to do?`,
-        Markup.keyboard([
-            ['View Project Details'],
-            ['Generate Groupings'],
-            ['Reset Interactions'],
-            ['Edit Project', 'Delete Project', 'Back'],
-        ]).resize(),
-    );
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
-const handleManageProjectOption = async (ctx: BotContext) => {
-    const text = getResponse(ctx);
-    if (isBackCommand(text)) {
-        debug('User selected "Back"');
-        return ctx.scene.enter('existingProjects', ctx.scene.session);
-    }
-    switch (text) {
-        case 'View Project Details': {
-            return ctx.scene.enter('viewProject', ctx.scene.session);
-        }
-        case 'Generate Groupings': {
-            debug('User selected "Generate Groupings"');
-            return ctx.scene.enter('generateGroupings', ctx.scene.session);
-        }
-        case 'Reset Interactions': {
-            debug('User selected "Reset Interactions"');
-            return ctx.scene.enter('resetInteractions', ctx.scene.session);
-        }
-        case 'Edit Project': {
-            debug('User selected "Edit Project"');
-            return ctx.scene.enter('editProject', ctx.scene.session);
-        }
-        case 'Delete Project': {
-            debug('User selected "Delete Project"');
-            return ctx.scene.enter('deleteProject', ctx.scene.session);
-        }
-        default: {
-            throw new InvalidTextError(
-                'Invalid option. Please select a valid option from the keyboard.',
-            );
-        }
-    }
-};
+const question = `What do you want to do?`;
+const mapOptionToScene = new Map<string, MiddlewareFn<BotContext>>([
+    ['View Project Details', async (ctx) => goToScene('viewProject', ctx)],
+    ['Generate Groupings', async (ctx) => goToScene('generateGroupings', ctx)],
+    ['Reset Interactions', async (ctx) => goToScene('resetInteractions', ctx)],
+    ['Edit Project', async (ctx) => goToScene('editProject', ctx)],
+    ['Delete Project', async (ctx) => goToScene('deleteProject', ctx)],
+]);
+
+const [askForMenuChoice, handleMenuChoice] = askAndHandleMenuFactory(
+    debug,
+    previousMenu,
+    question,
+    mapOptionToScene,
+);
 
 const manageProjectScene = makeSceneWithErrorHandling(
     'manageProject',
     debug,
     manageProject,
-    handleManageProjectOption,
+    askForMenuChoice,
+    handleMenuChoice,
 );
 
 export { manageProjectScene };
