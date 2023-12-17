@@ -19,6 +19,7 @@ import {
     returnToPreviousMenuFactory,
 } from '../util/scene';
 import { createProjectInDb } from '../db/functions';
+import { Markup } from 'telegraf';
 
 const debug = createDebug('bot:add_project_command');
 const previousMenu = 'mainMenu';
@@ -29,6 +30,7 @@ const previousMenu = 'mainMenu';
  */
 const addProject = async (ctx: BotContext, next: () => Promise<void>) => {
     debug(`Entering addProject scene.`);
+    ctx.reply(`Creating a new project...`, Markup.removeKeyboard());
     return goNextStep(ctx, next);
 };
 
