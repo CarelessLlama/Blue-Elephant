@@ -1,5 +1,5 @@
 import createDebug from 'debug';
-import { Markup, MiddlewareFn } from 'telegraf';
+import { MiddlewareFn } from 'telegraf';
 
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 import { updateProjectInDb } from '../db/functions';
