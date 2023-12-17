@@ -15,11 +15,9 @@ const manageProject = async (ctx: BotContext) => {
     await ctx.reply(
         `Project retrieved. What do you want to do?`,
         Markup.keyboard([
-            [
-                'View Project Details',
-                'Generate Groupings',
-                'Reset Interactions',
-            ],
+            ['View Project Details'],
+            ['Generate Groupings'],
+            ['Reset Interactions'],
             ['Edit Project', 'Delete Project', 'Back'],
         ]).resize(),
     );

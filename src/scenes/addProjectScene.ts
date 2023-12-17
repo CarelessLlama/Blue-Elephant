@@ -1,67 +1,50 @@
 import createDebug from 'debug';
 
 import { Project } from '../models/Project';
-import { createProjectInDb } from '../db/functions';
 import { BotContext } from '../BotContext';
+import { getUserId, storeProjectInSession } from '../util/botContext';
 import {
-    getProject,
-    getResponse,
-    getUserId,
-    storeProjectInSession,
-} from '../util/botContext';
-import { getProjectMembersFromString } from '../util/userInput';
-import { makeSceneWithErrorHandling } from '../util/scene';
+    askForProjectDescription,
+    askForProjectMembers,
+    askForProjectName,
+    goNextStep,
+    handleAddProjectMembersFactory,
+    handleEditProjectDescriptionFactory,
+    handleEditProjectNameFactory,
+    makeSceneWithErrorHandling,
+    saveProject,
+} from '../util/scene';
 
 const debug = createDebug('bot:add_project_command');
+const previousLocation = 'mainMenu';
 
 /**
  * Creates a new project in the database.
  * @returns A scene with middleware functions that handles the creation of a project.
  */
-const askForProjectName = async (ctx: BotContext) => {
+const addProject = async (ctx: BotContext, next: () => Promise<void>) => {
     debug(`Entering addProject scene.`);
-    await ctx.reply(
-        `Please enter a name for your project. The project name should be at least 3 characters long and cannot start with /.`,
-    );
-    return ctx.wizard.next();
+    return goNextStep(ctx, next);
 };
 
-const handleProjectName = async (ctx: BotContext) => {
+const createNewProject = async (ctx: BotContext, next: () => Promise<void>) => {
     const userId = getUserId(ctx);
-    const text = getResponse(ctx);
-    storeProjectInSession(ctx, Project.createBlankProject(text, userId));
-    await ctx.reply(`Please enter a short description for your project.`);
-    return ctx.wizard.next();
-};
-
-const askForProjectDescription = async (ctx: BotContext) => {
-    const text = getResponse(ctx);
-    debug(`Project description: ${text}`);
-    getProject(ctx).setDescription(text);
-    await ctx.reply(
-        `Please enter the project members' names, delimited by commas.`,
-    );
-    return ctx.wizard.next();
-};
-
-const askForProjectMembers = async (ctx: BotContext) => {
-    const text = getResponse(ctx);
-    debug(`Project members' inputs: ${text}`);
-    const personArr = getProjectMembersFromString(text);
-    const project = getProject(ctx);
-    project.setPersons(personArr);
-    createProjectInDb(project);
-    await ctx.reply(`Project members saved. Exiting scene now.`);
-    return ctx.scene.enter('mainMenu', ctx.scene.session);
+    storeProjectInSession(ctx, Project.createBlankProject(userId));
+    return goNextStep(ctx, next);
 };
 
 const addProjectScene = makeSceneWithErrorHandling(
     'addProject',
     debug,
+    addProject,
+    createNewProject,
     askForProjectName,
-    handleProjectName,
+    handleEditProjectNameFactory(debug, previousLocation),
     askForProjectDescription,
+    handleEditProjectDescriptionFactory(debug, previousLocation),
     askForProjectMembers,
+    handleAddProjectMembersFactory(debug, previousLocation),
+    saveProject,
 );
 
 export { addProjectScene };

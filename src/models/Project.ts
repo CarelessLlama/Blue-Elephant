@@ -34,8 +34,15 @@ export class Project {
         this.adjMatrix = adjMatrix;
     }
 
-    public static createBlankProject(name: string, userId: number): Project {
-        return new Project('NOT SET', userId, name, 'No description', [], []);
+    public static createBlankProject(userId: number): Project {
+        return new Project(
+            'NOT SET',
+            userId,
+            'NOT SET',
+            'No description',
+            [],
+            [],
+        );
     }
 
     public static createProject(
