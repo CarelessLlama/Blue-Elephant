@@ -3,7 +3,7 @@ import { Project } from './models/Project';
 
 interface SessionData extends Scenes.WizardSessionData {
     project: Project;
-    projectMap: Map<string, number>;
+    projectMap: Map<string, string>;
 }
 
 interface BotContext extends Context {
