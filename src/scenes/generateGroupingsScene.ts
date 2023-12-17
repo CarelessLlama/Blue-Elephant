@@ -6,7 +6,11 @@ import { InvalidInputTypeError } from '../exceptions';
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 import { updateProjectInDb } from '../db/functions';
 import { getProject, getResponse } from '../util/botContext';
-import { goToScene, makeSceneWithErrorHandling } from '../util/scene';
+import {
+    goToScene,
+    makeSceneWithErrorHandling,
+    waitForUserResponse,
+} from '../util/scene';
 
 const debug = createDebug('bot:generate_groupings_command');
 const previousMenu = 'manageProject';
@@ -18,7 +22,7 @@ const getNumGroups = async (ctx: BotContext) => {
         `How many groups do you want to generate?`,
         Markup.removeKeyboard(),
     );
-    return ctx.wizard.next();
+    return waitForUserResponse(ctx);
 };
 
 const handleNumGroups = async (ctx: BotContext) => {

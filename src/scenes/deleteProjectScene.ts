@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 
-import { Markup, MiddlewareFn } from 'telegraf';
+import { MiddlewareFn } from 'telegraf';
 
 import { deleteProjectInDb } from '../db/functions';
 
@@ -8,6 +8,7 @@ import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
 import {
     askAndHandleMenuFactory,
     goNextStep,
+    goToScene,
     makeSceneWithErrorHandling,
     returnToPreviousMenuFactory,
 } from '../util/scene';
@@ -34,7 +35,7 @@ const map = new Map<string, MiddlewareFn<BotContext>>([
             const project = getProject(ctx);
             await deleteProjectInDb(project.getId());
             await ctx.reply(`Project deleted.`);
-            return ctx.scene.enter('mainMenu', Markup.removeKeyboard());
+            return goToScene('mainMenu', ctx);
         },
     ],
     ['No', returnToPreviousMenuFactory(previousMenu)],

@@ -9,7 +9,12 @@ import {
     storeProjectInSession,
 } from '../util/botContext';
 import { isBackCommand } from '../util/userInput';
-import { goNextStep, makeSceneWithErrorHandling } from '../util/scene';
+import {
+    goNextStep,
+    goToScene,
+    makeSceneWithErrorHandling,
+    waitForUserResponse,
+} from '../util/scene';
 import { InvalidTextError } from '../exceptions';
 
 const debug = createDebug('bot:existing_projects_command');
@@ -33,13 +38,13 @@ const askForProject = async (ctx: BotContext) => {
         `Please choose an existing project that you want to view.`,
         Markup.keyboard([...userProjectList, 'Back']).resize(),
     );
-    return ctx.wizard.next();
+    return waitForUserResponse(ctx);
 };
 
 const handleProjectChoice = async (ctx: BotContext) => {
     const text = getResponse(ctx);
     if (isBackCommand(text)) {
-        return ctx.scene.enter(previousMenu);
+        return goToScene(previousMenu, ctx);
     }
     const projectMap = getMapFromSession(ctx);
     const projectId = projectMap.get(text);
@@ -48,7 +53,7 @@ const handleProjectChoice = async (ctx: BotContext) => {
         const proj = await loadProjectFromDb(projectId);
         storeProjectInSession(ctx, proj);
         await ctx.reply(`Loading existing project.`, Markup.removeKeyboard());
-        return ctx.scene.enter('manageProject', ctx.scene.session);
+        return goToScene('manageProject', ctx);
     } else {
         throw new InvalidTextError(
             'Invalid option. Please select a valid option from the keyboard.',

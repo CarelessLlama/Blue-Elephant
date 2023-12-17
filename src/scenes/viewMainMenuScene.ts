@@ -1,10 +1,11 @@
 import createDebug from 'debug';
-import { Markup, MiddlewareFn } from 'telegraf';
+import { MiddlewareFn } from 'telegraf';
 
 import { BotContext } from '../BotContext';
 import {
     askAndHandleMenuFactory,
     goNextStep,
+    goToScene,
     makeSceneWithErrorHandling,
 } from '../util/scene';
 
@@ -17,14 +18,10 @@ const mainMenu = async (ctx: BotContext, next: () => Promise<void>) => {
 
 const question = `What do you want to do?`;
 const map = new Map<string, MiddlewareFn<BotContext>>([
-    [
-        'Create New Project',
-        async (ctx) => ctx.scene.enter('addProject', Markup.removeKeyboard()),
-    ],
+    ['Create New Project', async (ctx) => goToScene('addProject', ctx)],
     [
         'View Existing Project(s)',
-        async (ctx) =>
-            ctx.scene.enter('existingProjects', Markup.removeKeyboard()),
+        async (ctx) => goToScene('existingProjects', ctx),
     ],
 ]);
 
