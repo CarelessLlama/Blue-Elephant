@@ -51,6 +51,7 @@ export const goToScene = (sceneId: string, ctx: BotContext) => {
 export const askForProjectMembers = async (ctx: BotContext) => {
     await ctx.reply(
         `Please enter the project members' names, delimited by commas. To cancel, type "Back".`,
+        Markup.removeKeyboard(),
     );
     return waitForUserResponse(ctx);
 };
@@ -72,6 +73,7 @@ export const handleAddProjectMembersFactory =
 export const askForProjectName = async (ctx: BotContext) => {
     await ctx.reply(
         `Please enter your new project name. To cancel, type "Back".`,
+        Markup.removeKeyboard(),
     );
     return waitForUserResponse(ctx);
 };
@@ -91,6 +93,7 @@ export const handleEditProjectNameFactory =
 export const askForProjectDescription = async (ctx: BotContext) => {
     await ctx.reply(
         `Please enter your new project description. To cancel, type "Back".`,
+        Markup.removeKeyboard(),
     );
     return waitForUserResponse(ctx);
 };
