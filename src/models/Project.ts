@@ -34,8 +34,15 @@ export class Project {
         this.adjMatrix = adjMatrix;
     }
 
-    public static createBlankProject(name: string, userId: number): Project {
-        return new Project('NOT SET', userId, name, 'No description', [], []);
+    public static createBlankProject(userId: number): Project {
+        return new Project(
+            'NOT SET',
+            userId,
+            'NOT SET',
+            'No description',
+            [],
+            [],
+        );
     }
 
     public static createProject(
@@ -69,6 +76,21 @@ export class Project {
     }
 
     public addPeople(personArr: string[]): void {
+        personArr.forEach((person) => {
+            Project.validatePerson(person);
+            if (this.personArr.indexOf(person) !== -1) {
+                throw new Error(
+                    person + ' already exists in project. Nobody was added.',
+                );
+            }
+            if (personArr.indexOf(person) !== personArr.lastIndexOf(person)) {
+                throw new Error(
+                    'Unable to add ' +
+                        person +
+                        ' to project twice. Nobody was added.',
+                );
+            }
+        });
         personArr.forEach((person) => this.addPerson(person));
     }
 
@@ -116,7 +138,7 @@ export class Project {
     public setPersons(personArr: string[]): void {
         Project.validatePeople(personArr);
         this.personArr = [];
-        personArr.forEach((person) => this.addPerson(person)); // TODO: make this more efficient
+        this.addPeople(personArr);
         const n = this.personArr.length;
         this.setAdjMatrix(
             Array(n)
@@ -161,6 +183,9 @@ export class Project {
         }
     }
     public static isValidUserId(userid: number): boolean {
+        if (isNaN(userid)) {
+            return false;
+        }
         return userid >= 0;
     }
     public static validateUserId(userid: number): void {
@@ -174,7 +199,8 @@ export class Project {
     public static validateName(name: string): void {
         if (!Project.isValidName(name)) {
             throw new Error(
-                'Invalid project name. A project name needs to be at least 3 characters long and cannot start with /.',
+                'Invalid project name. A project name needs to be at least 3 characters long ' +
+                    'and cannot start with /.',
             );
         }
     }
@@ -204,15 +230,24 @@ export class Project {
     private validateAdjMatrix(adjMatrix: number[][]): void {
         if (adjMatrix.length !== this.personArr.length) {
             throw new Error(
-                'Invalid adjacency matrix. The number of rows in the adjacency matrix must be equal to the number of people in the project.',
+                'Invalid adjacency matrix. The number of rows in the adjacency matrix must be equal' +
+                    'to the number of people in the project.',
             );
         }
         adjMatrix.forEach((row) => {
             if (row.length !== this.personArr.length) {
                 throw new Error(
-                    'Invalid adjacency matrix. The number of columns in the adjacency matrix must be equal to the number of people in the project.',
+                    'Invalid adjacency matrix. The number of columns in the adjacency ' +
+                        'matrix must be equal to the number of people in the project.',
                 );
             }
+            row.forEach((num) => {
+                if (isNaN(num)) {
+                    throw new Error(
+                        'Invalid adjacency matrix. The adjacency matrix must only contain numbers.',
+                    );
+                }
+            });
         });
     }
 
@@ -230,5 +265,12 @@ export class Project {
         this.adjMatrix = Array(n)
             .fill(null)
             .map(() => Array(n).fill(0));
+    }
+
+    public toString(): string {
+        let out = `Project Name: ${this.name}\n`;
+        out += `Project Description: ${this.description}\n`;
+        out += `Project Members: ${this.personArr}\n`;
+        return out;
     }
 }
