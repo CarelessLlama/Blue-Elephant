@@ -1,10 +1,13 @@
-function parsePeopleListString(peopleList: string): string[] {
-    const peopleArr = peopleList.split(',').map((person) => person.trim());
-    return peopleArr;
-}
-
-function isBackCommand(text: string): boolean {
+export function isBackCommand(text: string): boolean {
     return text.toLowerCase() === 'back';
 }
 
-export { parsePeopleListString, isBackCommand };
+/**
+ * Checks if a string is a valid project members' list.
+ * @param text - The text to check
+ * @returns An array of people
+ */
+export function getProjectMembersFromString(text: string): string[] {
+    const memberArr = text.split(',').map((person) => person.trim());
+    return memberArr;
+}

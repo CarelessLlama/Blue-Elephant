@@ -9,7 +9,7 @@ import {
     getUserId,
     storeProjectInSession,
 } from '../util/botContext';
-import { parsePeopleListString } from '../util/userInput';
+import { getProjectMembersFromString } from '../util/userInput';
 import { makeSceneWithErrorHandling } from '../util/scene';
 
 const debug = createDebug('bot:add_project_command');
@@ -47,7 +47,7 @@ const askForProjectDescription = async (ctx: BotContext) => {
 const askForProjectMembers = async (ctx: BotContext) => {
     const text = getResponse(ctx);
     debug(`Project members' inputs: ${text}`);
-    const personArr = parsePeopleListString(text);
+    const personArr = getProjectMembersFromString(text);
     const project = getProject(ctx);
     project.setPersons(personArr);
     createProjectInDb(project);
