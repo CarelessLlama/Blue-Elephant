@@ -85,6 +85,11 @@ export async function loadProjectFromDb(projectId: string): Promise<Project> {
  * @returns Project id as a string
  */
 export async function createProjectInDb(project: Project): Promise<string> {
+    if (project.hasBeenSavedBefore()) {
+        throw new Error(
+            'Project has already been saved to database. Use the update function instead.',
+        );
+    }
     const dbProject = await DbProject.create({
         userId: project.getUserId(),
         name: project.getName(),
@@ -108,9 +113,9 @@ export async function getProjectsFromDb(
     const projects = await DbProject.find({ userId: userId }).exec();
     const map = new Map();
     for (const proj of projects) {
-        map.set(proj.name, proj._id);
+        map.set(proj.name, proj._id.toString());
     }
-    return map;
+    return Promise.resolve(map);
 }
 
 /**
@@ -120,5 +125,8 @@ export async function getProjectsFromDb(
  */
 export async function deleteProjectInDb(projectId: string) {
     const id = makeObjectId(projectId);
-    await DbProject.deleteOne({ _id: id }).exec();
+    const result = await DbProject.findByIdAndDelete(id).exec();
+    if (result == null) {
+        throw new Error('Project cannot be found. Project Id: ' + projectId);
+    }
 }
