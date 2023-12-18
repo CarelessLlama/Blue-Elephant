@@ -43,3 +43,13 @@ describe('connectToDatabase()', () => {
         );
     });
 });
+
+describe('updateProjectInDb()', () => {});
+
+describe('loadProjectFromDb()', () => {});
+
+describe('createProjectInDb()', () => {});
+
+describe('getProjectsFromDb()', () => {});
+
+describe('deleteProjectInDb()', () => {});

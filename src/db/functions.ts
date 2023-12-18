@@ -22,7 +22,7 @@ function makeObjectId(id: string) {
  */
 export async function connectToDatabase() {
     const dbUri = process.env.MONGODB_URI;
-    if (dbUri == undefined) {
+    if (!dbUri) {
         throw new Error('Please define the MONGODB_URI environment variable');
     }
     await mongoose.connect(dbUri);
