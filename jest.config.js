@@ -10,4 +10,5 @@ module.exports = {
     roots: ['<rootDir>/test', '<rootDir>/src'],
     testRegex: '((\\.|/*.)(test))\\.ts?$',
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    restoreMocks: true,
 };

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 import { Project as DbProject } from './schema/Project';
 import { Project } from '../models/Project';
 import { ObjectId } from 'mongodb';
@@ -35,8 +36,8 @@ export async function connectToDatabase() {
  * @param proj - project to save to database
  */
 export async function updateProjectInDb(proj: Project) {
-    if (!proj.presentInDatabase()) {
-        throw new Error('Project not present in database');
+    if (!proj.hasBeenSavedBefore()) {
+        throw new Error('Project has not been saved to database yet');
     }
     const id = makeObjectId(proj.getId());
     const userId = proj.getUserId();
@@ -48,6 +49,8 @@ export async function updateProjectInDb(proj: Project) {
         project.members = proj.getPersons();
         project.relationGraph = proj.getAdjMatrix();
         await project.save();
+    } else {
+        throw new Error('Project not found in database');
     }
 }
 
