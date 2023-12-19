@@ -125,8 +125,5 @@ export async function getProjectsFromDb(
  */
 export async function deleteProjectInDb(projectId: string) {
     const id = makeObjectId(projectId);
-    const result = await DbProject.findByIdAndDelete(id).exec();
-    if (result == null) {
-        throw new Error('Project cannot be found. Project Id: ' + projectId);
-    }
+    await DbProject.findByIdAndDelete(id).exec();
 }

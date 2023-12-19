@@ -196,14 +196,12 @@ describe('deleteProjectInDb()', () => {
             expect(err).toEqual(new Error('Invalid project id: ' + invalidId)),
         );
     });
-    it('should throw an error if project does not exist in database', async () => {
+    it('should not throw an error if project does not exist in database', async () => {
         const idString = VALID_DB_PROJECT_1._id.toString();
         mockingoose(DbProject).toReturn(null, 'findOneAndDelete');
         expect.assertions(1);
-        await deleteProjectInDb(idString).catch((err) =>
-            expect(err).toEqual(
-                new Error('Project cannot be found. Project Id: ' + idString),
-            ),
+        await deleteProjectInDb(idString).then((_) =>
+            expect(true).toEqual(true),
         );
     });
 });
