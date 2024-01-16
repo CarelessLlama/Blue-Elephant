@@ -6,6 +6,7 @@ import { ObjectId } from 'mongodb';
 // do not have a valid id until they are saved to the database.
 
 export class Project {
+    public static readonly NOT_SET = 'NOT_SET';
     private id: string;
     private userid: number;
     private name: string;
@@ -21,10 +22,6 @@ export class Project {
         adjMatrix: number[][],
         stringPersonArr: string[],
     ) {
-        Project.validateUserId(userid);
-        Project.validateName(name);
-        Project.validateDescription(description);
-        Project.validatePeople(stringPersonArr);
         this.id = id;
         this.userid = userid;
         this.name = name;
@@ -34,12 +31,31 @@ export class Project {
         this.adjMatrix = adjMatrix;
     }
 
-    public static createBlankProject(userId: number): Project {
+    public static _Project(
+        id: string,
+        userid: number,
+        name: string,
+        description: string,
+        adjMatrix: number[][],
+        stringPersonArr: string[],
+    ): Project {
         return new Project(
-            'NOT SET',
+            id,
+            userid,
+            name,
+            description,
+            adjMatrix,
+            stringPersonArr,
+        );
+    }
+
+    public static createBlankProject(userId: number): Project {
+        Project.validateUserId(userId);
+        return new Project(
+            Project.NOT_SET,
             userId,
-            'NOT SET',
-            'No description',
+            Project.NOT_SET,
+            Project.NOT_SET,
             [],
             [],
         );
@@ -54,6 +70,11 @@ export class Project {
         stringPersonArr: string[],
     ): Project {
         Project.validateId(id);
+        Project.validateUserId(userid);
+        Project.validateName(name);
+        Project.validateDescription(description);
+        Project.validatePeople(stringPersonArr);
+        Project.validateAdjMatrix(stringPersonArr, adjMatrix);
         return new Project(
             id,
             userid,
@@ -227,15 +248,22 @@ export class Project {
     public static validatePeople(persons: string[]): void {
         persons.forEach((person) => Project.validatePerson(person));
     }
+
     private validateAdjMatrix(adjMatrix: number[][]): void {
-        if (adjMatrix.length !== this.personArr.length) {
+        Project.validateAdjMatrix(this.personArr, adjMatrix);
+    }
+    private static validateAdjMatrix(
+        personArr: string[],
+        adjMatrix: number[][],
+    ): void {
+        if (adjMatrix.length !== personArr.length) {
             throw new Error(
                 'Invalid adjacency matrix. The number of rows in the adjacency matrix must be equal' +
                     'to the number of people in the project.',
             );
         }
         adjMatrix.forEach((row) => {
-            if (row.length !== this.personArr.length) {
+            if (row.length !== personArr.length) {
                 throw new Error(
                     'Invalid adjacency matrix. The number of columns in the adjacency ' +
                         'matrix must be equal to the number of people in the project.',
@@ -251,8 +279,8 @@ export class Project {
         });
     }
 
-    public presentInDatabase(): boolean {
-        return this.id !== 'NOT SET';
+    public hasBeenSavedBefore(): boolean {
+        return this.id !== Project.NOT_SET;
     }
 
     public incrementInteractions(person1: number, person2: number): void {

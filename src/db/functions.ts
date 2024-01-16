@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+
 import { Project as DbProject } from './schema/Project';
 import { Project } from '../models/Project';
 import { ObjectId } from 'mongodb';
@@ -22,7 +23,7 @@ function makeObjectId(id: string) {
  */
 export async function connectToDatabase() {
     const dbUri = process.env.MONGODB_URI;
-    if (dbUri == undefined) {
+    if (!dbUri) {
         throw new Error('Please define the MONGODB_URI environment variable');
     }
     await mongoose.connect(dbUri);
@@ -35,8 +36,8 @@ export async function connectToDatabase() {
  * @param proj - project to save to database
  */
 export async function updateProjectInDb(proj: Project) {
-    if (!proj.presentInDatabase()) {
-        throw new Error('Project not present in database');
+    if (!proj.hasBeenSavedBefore()) {
+        throw new Error('Project has not been saved to database yet');
     }
     const id = makeObjectId(proj.getId());
     const userId = proj.getUserId();
@@ -48,6 +49,8 @@ export async function updateProjectInDb(proj: Project) {
         project.members = proj.getPersons();
         project.relationGraph = proj.getAdjMatrix();
         await project.save();
+    } else {
+        throw new Error('Project not found in database');
     }
 }
 
@@ -82,6 +85,11 @@ export async function loadProjectFromDb(projectId: string): Promise<Project> {
  * @returns Project id as a string
  */
 export async function createProjectInDb(project: Project): Promise<string> {
+    if (project.hasBeenSavedBefore()) {
+        throw new Error(
+            'Project has already been saved to database. Use the update function instead.',
+        );
+    }
     const dbProject = await DbProject.create({
         userId: project.getUserId(),
         name: project.getName(),
@@ -105,9 +113,9 @@ export async function getProjectsFromDb(
     const projects = await DbProject.find({ userId: userId }).exec();
     const map = new Map();
     for (const proj of projects) {
-        map.set(proj.name, proj._id);
+        map.set(proj.name, proj._id.toString());
     }
-    return map;
+    return Promise.resolve(map);
 }
 
 /**
@@ -117,5 +125,5 @@ export async function getProjectsFromDb(
  */
 export async function deleteProjectInDb(projectId: string) {
     const id = makeObjectId(projectId);
-    await DbProject.deleteOne({ _id: id }).exec();
+    await DbProject.findByIdAndDelete(id).exec();
 }
