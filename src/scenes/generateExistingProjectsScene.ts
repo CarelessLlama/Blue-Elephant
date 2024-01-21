@@ -1,24 +1,15 @@
 import createDebug from 'debug';
 import { Markup } from 'telegraf';
 
-import { getProjectsFromDb, loadProjectFromDb } from '../db/functions';
+import { getProjectsFromDb } from '../db/functions';
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
-import {
-    getMapFromSession,
-    getResponse,
-    getUserId,
-    storeProjectInSession,
-    storeMapInSession,
-} from '../util/botContext';
-import { isBackCommand } from '../util/userInput';
+import { getUserId, storeMapInSession } from '../util/botContext';
 import {
     goNextStep,
-    goToScene,
     handleProjectChoiceFactory,
     makeSceneWithErrorHandling,
     waitForUserResponse,
 } from '../util/scene';
-import { InvalidTextError } from '../exceptions';
 
 const debug = createDebug('bot:existing_projects_command');
 const previousMenu = 'mainMenu';
