@@ -37,6 +37,10 @@ bot.telegram.setMyCommands([
         command: 'start',
         description: 'starts the bot',
     },
+    {
+        command: 'exit',
+        description: 'exits the bot',
+    },
 ]);
 
 const stage = new Scenes.Stage<BotContext>([
