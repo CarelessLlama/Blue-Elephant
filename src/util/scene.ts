@@ -1,9 +1,22 @@
 import { Markup, MiddlewareFn, Scenes } from 'telegraf';
 import { BotContext } from '../BotContext';
-import { getProject, getResponse, handleError } from './botContext';
+import { author, name, version } from '../../package.json';
+import {
+    getMapFromSession,
+    getProject,
+    getResponse,
+    handleError,
+    storeProjectInSession,
+} from './botContext';
 import { Debugger } from 'debug';
-import { getProjectMembersFromString, isBackCommand } from './userInput';
-import { updateProjectInDb } from '../db/functions';
+import {
+    getProjectMembersFromString,
+    isBackCommand,
+    isStartCommand,
+    isAboutCommand,
+    isExitCommand,
+} from './userInput';
+import { loadProjectFromDb, updateProjectInDb } from '../db/functions';
 import { InvalidTextError } from '../exceptions';
 
 export function makeSceneWithErrorHandling(
@@ -27,6 +40,30 @@ export function makeSceneWithErrorHandling(
         id,
         ...steps.map(addErrorHandlingToStep),
     );
+}
+
+function executeCommandIfAny(
+    text: string,
+    backLocation: string,
+    ctx: BotContext,
+): Promise<void> | Promise<unknown> | void {
+    if (isBackCommand(text)) {
+        return goToScene(backLocation, ctx);
+    }
+    if (isStartCommand(text)) {
+        return goToScene('mainMenu', ctx);
+    }
+    if (isAboutCommand(text)) {
+        const message = `${name} ${version}\n${author}`;
+        ctx.reply(message);
+        ctx.scene.reenter();
+        // BUG: reentering the scene causes the bot to reply 'Invalid option. Please select a valid option from the keyboard.'
+    }
+    if (isExitCommand(text)) {
+        ctx.reply('Bye!');
+        return ctx.scene.leave();
+    }
+    return;
 }
 
 // Scene abstractions
@@ -60,8 +97,9 @@ export const handleAddProjectMembersFactory =
     (debug: Debugger, backLocation: string) =>
     async (ctx: BotContext, next: () => Promise<void>) => {
         const text = getResponse(ctx);
-        if (isBackCommand(text)) {
-            return goToScene(backLocation, ctx);
+        const command = executeCommandIfAny(text, backLocation, ctx);
+        if (command) {
+            return command;
         }
         const personArr = getProjectMembersFromString(text);
         debug(`Project members' inputs: ${text}`);
@@ -82,8 +120,9 @@ export const handleEditProjectNameFactory =
     (backLocation: string) =>
     async (ctx: BotContext, next: () => Promise<void>) => {
         const text = getResponse(ctx);
-        if (isBackCommand(text)) {
-            return goToScene(backLocation, ctx);
+        const command = executeCommandIfAny(text, backLocation, ctx);
+        if (command) {
+            return command;
         }
         const project = getProject(ctx);
         project.setName(text);
@@ -102,8 +141,9 @@ export const handleEditProjectDescriptionFactory =
     (debug: Debugger, backLocation: string) =>
     async (ctx: BotContext, step: () => Promise<void>) => {
         const text = getResponse(ctx);
-        if (isBackCommand(text)) {
-            return goToScene(backLocation, ctx);
+        const command = executeCommandIfAny(text, backLocation, ctx);
+        if (command) {
+            return command;
         }
         const project = getProject(ctx);
         project.setDescription(text);
@@ -127,7 +167,7 @@ export const returnToPreviousMenuFactory =
 
 export const askAndHandleMenuFactory = (
     debug: Debugger,
-    previousMenu: string | undefined,
+    previousMenu: string,
     question: string,
     map: Map<string, MiddlewareFn<BotContext>>,
 ): [MiddlewareFn<BotContext>, MiddlewareFn<BotContext>] => {
@@ -144,9 +184,9 @@ export const askAndHandleMenuFactory = (
         next: () => Promise<void>,
     ) => {
         const text = getResponse(ctx);
-        if (isBackCommand(text) && previousMenu) {
-            debug('User selected "Back"');
-            return goToScene(previousMenu, ctx);
+        const command = executeCommandIfAny(text, previousMenu, ctx);
+        if (command) {
+            return command;
         }
         const scene = map.get(text);
         if (!scene) {
@@ -159,3 +199,28 @@ export const askAndHandleMenuFactory = (
     };
     return [askSelectFromMenu, handleSelectFromMenu];
 };
+
+export const handleProjectChoiceFactory =
+    (debug: Debugger, backLocation: string) => async (ctx: BotContext) => {
+        const text = getResponse(ctx);
+        const command = executeCommandIfAny(text, backLocation, ctx);
+        if (command) {
+            return command;
+        }
+        const projectMap = getMapFromSession(ctx);
+        const projectId = projectMap.get(text);
+        if (projectId) {
+            debug(`User selected to view ${text}`);
+            const proj = await loadProjectFromDb(projectId);
+            storeProjectInSession(ctx, proj);
+            await ctx.reply(
+                `Loading existing project.`,
+                Markup.removeKeyboard(),
+            );
+            return goToScene('manageProject', ctx);
+        } else {
+            throw new InvalidTextError(
+                'Invalid option. Please select a valid option from the keyboard.',
+            );
+        }
+    };

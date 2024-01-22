@@ -49,10 +49,23 @@ function storeProjectInSession(ctx: BotContext, project: Project): void {
     ctx.scene.session.project = project;
 }
 
+function getMapFromSession(ctx: BotContext): Map<string, string> {
+    return ctx.scene.session.projectMap;
+}
+
+function storeMapInSession(
+    ctx: BotContext,
+    userProjectMap: Map<string, string>,
+): void {
+    ctx.scene.session.projectMap = userProjectMap;
+}
+
 export {
     getResponse,
     getUserId,
+    getMapFromSession,
     getProject,
     handleError,
+    storeMapInSession,
     storeProjectInSession,
 };

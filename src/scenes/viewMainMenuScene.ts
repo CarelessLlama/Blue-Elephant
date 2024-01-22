@@ -27,7 +27,7 @@ const map = new Map<string, MiddlewareFn<BotContext>>([
 
 const [askForMenuChoice, handleMenuChoice] = askAndHandleMenuFactory(
     debug,
-    undefined,
+    '',
     question,
     map,
 );

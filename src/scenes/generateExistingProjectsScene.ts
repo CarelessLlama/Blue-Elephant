@@ -1,21 +1,15 @@
 import createDebug from 'debug';
 import { Markup } from 'telegraf';
 
-import { getProjectsFromDb, loadProjectFromDb } from '../db/functions';
+import { getProjectsFromDb } from '../db/functions';
 import { BotContext, updateSessionDataBetweenScenes } from '../BotContext';
-import {
-    getResponse,
-    getUserId,
-    storeProjectInSession,
-} from '../util/botContext';
-import { isBackCommand } from '../util/userInput';
+import { getUserId, storeMapInSession } from '../util/botContext';
 import {
     goNextStep,
-    goToScene,
+    handleProjectChoiceFactory,
     makeSceneWithErrorHandling,
     waitForUserResponse,
 } from '../util/scene';
-import { InvalidTextError } from '../exceptions';
 
 const debug = createDebug('bot:existing_projects_command');
 const previousMenu = 'mainMenu';
@@ -41,25 +35,7 @@ const askForProject = async (ctx: BotContext) => {
     return waitForUserResponse(ctx);
 };
 
-const handleProjectChoice = async (ctx: BotContext) => {
-    const text = getResponse(ctx);
-    if (isBackCommand(text)) {
-        return goToScene(previousMenu, ctx);
-    }
-    const projectMap = getMapFromSession(ctx);
-    const projectId = projectMap.get(text);
-    if (projectId) {
-        debug(`User selected to view ${text}`);
-        const proj = await loadProjectFromDb(projectId);
-        storeProjectInSession(ctx, proj);
-        await ctx.reply(`Loading existing project.`, Markup.removeKeyboard());
-        return goToScene('manageProject', ctx);
-    } else {
-        throw new InvalidTextError(
-            'Invalid option. Please select a valid option from the keyboard.',
-        );
-    }
-};
+const handleProjectChoice = handleProjectChoiceFactory(debug, previousMenu);
 
 const generateExistingProjectsScene = makeSceneWithErrorHandling(
     'existingProjects',
@@ -70,17 +46,6 @@ const generateExistingProjectsScene = makeSceneWithErrorHandling(
 );
 
 export { generateExistingProjectsScene };
-
-function storeMapInSession(
-    ctx: BotContext,
-    userProjectMap: Map<string, string>,
-): void {
-    ctx.scene.session.projectMap = userProjectMap;
-}
-
-function getMapFromSession(ctx: BotContext): Map<string, string> {
-    return ctx.scene.session.projectMap;
-}
 
 function makeProjectList(userProjectMap: Map<string, string>): string[] {
     const userProjectList = [...userProjectMap.keys()];
