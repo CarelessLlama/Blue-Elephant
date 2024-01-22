@@ -293,6 +293,14 @@ export class Project {
         this.adjMatrix = Array(n)
             .fill(null)
             .map(() => Array(n).fill(0));
+        this.shufflePeople();
+    }
+
+    public shufflePeople(): void {
+        for (let i = this.personArr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.personArr[i], this.personArr[j]] = [this.personArr[j], this.personArr[i]];
+        }
     }
 
     public toString(): string {
