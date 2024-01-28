@@ -42,7 +42,7 @@ export function makeSceneWithErrorHandling(
     );
 }
 
-function executeCommandIfAny(
+export function executeCommandIfAny(
     text: string,
     backLocation: string,
     ctx: BotContext,
