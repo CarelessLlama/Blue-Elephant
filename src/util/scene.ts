@@ -76,6 +76,7 @@ export const goNextStep = async (
         return ctx.wizard.step(ctx, next);
     }
 };
+
 export const waitForUserResponse = async (ctx: BotContext) => {
     return ctx.wizard.next();
 };
