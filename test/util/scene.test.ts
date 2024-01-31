@@ -16,7 +16,7 @@ import {
     handleProjectChoiceFactory,
 } from '../../src/util/scene';
 import { BotContext } from '../../src/BotContext';
-import { MiddlewareFn } from 'telegraf';
+import { MiddlewareFn, Markup } from 'telegraf';
 import { Scenes } from 'telegraf';
 import { Debugger } from 'debug';
 import { author, name, version } from '../../package.json';
@@ -132,5 +132,137 @@ describe('goNextStep with correct arguments', () => {
     it('calls goNextStep with correct arguments', async () => {
         await goNextStep(ctx, next);
         expect(ctx.wizard.step).toHaveBeenCalledWith(ctx, next);
+    });
+});
+
+/**
+ * Test to verify if waitForUserResponse function handles scene changes correctly
+ */
+describe('waitForUserResponse with correct arguments', () => {
+    it('calls waitForUserResponse with correct arguments', async () => {
+        await waitForUserResponse(ctx);
+        expect(ctx.wizard.next).toHaveBeenCalled();
+    });
+});
+
+/**
+ * Test to verify if goToScene function handles scene changes correctly
+ */
+describe('goToScene with correct arguments', () => {
+    it('calls goToScene with correct arguments', async () => {
+        await goToScene('mainMenu', ctx);
+        expect(ctx.scene.enter).toHaveBeenCalledWith(
+            'mainMenu',
+            ctx.scene.session,
+        );
+    });
+});
+
+/**
+ * Test to verify if askForProjectMembers function handles scene changes correctly
+ */
+describe('askForProjectMembers with correct arguments', () => {
+    it('calls askForProjectMembers with correct arguments', async () => {
+        await askForProjectMembers(ctx);
+        expect(ctx.reply).toHaveBeenCalledWith(
+            `Please enter the project members' names, delimited by commas. To cancel, type "Back".`,
+            Markup.removeKeyboard(),
+        );
+        expect(ctx.wizard.next).toHaveBeenCalled();
+    });
+});
+
+/**
+ * Test to verify if handleAddProjectMembersFactory function handles scene changes correctly
+ */
+describe('handleAddProjectMembersFactory with correct arguments', () => {
+    it('calls handleAddProjectMembersFactory with correct arguments', async () => {
+        // TODO: Add test (requires mocking)
+    });
+});
+
+/**
+ * Test to verify if askForProjectName function handles scene changes correctly
+ */
+describe('askForProjectName with correct arguments', () => {
+    it('calls askForProjectName with correct arguments', async () => {
+        await askForProjectName(ctx);
+        expect(ctx.reply).toHaveBeenCalledWith(
+            `Please enter your new project name. To cancel, type "Back".`,
+            Markup.removeKeyboard(),
+        );
+        expect(ctx.wizard.next).toHaveBeenCalled();
+    });
+});
+
+/**
+ * Test to verify if handleEditProjectNameFactory function handles scene changes correctly
+ */
+describe('handleEditProjectNameFactory with correct arguments', () => {
+    it('calls handleEditProjectNameFactory with correct arguments', async () => {
+        // TODO: Add test (requires mocking)
+    });
+});
+
+/**
+ * Test to verify if askForProjectDescription function handles scene changes correctly
+ */
+describe('askForProjectDescription with correct arguments', () => {
+    it('calls askForProjectDescription with correct arguments', async () => {
+        await askForProjectDescription(ctx);
+        expect(ctx.reply).toHaveBeenCalledWith(
+            `Please enter your new project description. To cancel, type "Back".`,
+            Markup.removeKeyboard(),
+        );
+        expect(ctx.wizard.next).toHaveBeenCalled();
+    });
+});
+
+/**
+ * Test to verify if handleEditProjectDescriptionFactory function handles scene changes correctly
+ */
+describe('handleEditProjectDescriptionFactory with correct arguments', () => {
+    it('calls handleEditProjectDescriptionFactory with correct arguments', async () => {
+        // TODO: Add test (requires mocking)
+    });
+});
+
+/**
+ * Test to verify if saveProject function handles scene changes correctly
+ */
+describe('saveProject with correct arguments', () => {
+    it('calls saveProject with correct arguments', async () => {
+        // TODO: Add test (requires mocking)
+    });
+});
+
+/**
+ * Test to verify if returnToPreviousMenuFactory function handles scene changes correctly
+ */
+describe('returnToPreviousMenuFactory with correct arguments', () => {
+    it('calls returnToPreviousMenuFactory with correct arguments', async () => {
+        await returnToPreviousMenuFactory('mainMenu')(ctx);
+        expect(ctx.scene.enter).toHaveBeenCalledWith(
+            'mainMenu',
+            ctx.scene.session,
+        );
+    });
+});
+
+/**
+ * Test to verify if askAndHandleMenuFactory function handles scene changes correctly
+ */
+describe('askAndHandleMenuFactory with correct arguments', () => {
+    it('calls askAndHandleMenuFactory with correct arguments', async () => {
+        // TODO: Add test (requires mocking)
+    });
+});
+
+/**
+ * Test to verify if handleProjectChoiceFactory function handles scene changes correctly
+ */
+describe('handleProjectChoiceFactory with correct arguments', () => {
+    it('calls handleProjectChoiceFactory with correct arguments', async () => {
+        // TODO: Add test (requires mocking)
     });
 });
