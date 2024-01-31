@@ -42,7 +42,7 @@ export function makeSceneWithErrorHandling(
     );
 }
 
-function executeCommandIfAny(
+export function executeCommandIfAny(
     text: string,
     backLocation: string,
     ctx: BotContext,
@@ -76,6 +76,7 @@ export const goNextStep = async (
         return ctx.wizard.step(ctx, next);
     }
 };
+
 export const waitForUserResponse = async (ctx: BotContext) => {
     return ctx.wizard.next();
 };

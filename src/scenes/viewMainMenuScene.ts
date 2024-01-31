@@ -40,4 +40,10 @@ const viewMainMenuScene = makeSceneWithErrorHandling(
     handleMenuChoice,
 );
 
-export { viewMainMenuScene };
+export {
+    viewMainMenuScene,
+    mainMenu,
+    askForMenuChoice,
+    handleMenuChoice,
+    debug,
+};
